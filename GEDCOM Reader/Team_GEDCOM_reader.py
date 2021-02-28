@@ -79,8 +79,12 @@ with open('JonathanCucci.ged.txt') as fam:
         elif("DIV" in newLine):
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
+                marr_date = text[line_point-1].split()
                 try:
-                    families[-1].divorced = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                    if(next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
+                        families[-1].divorced = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                    else:
+                        families[-1].divorced = "INVALID DATE"
                 except KeyError:
                     families[-1].divorced = next_line[-1]
             else:
