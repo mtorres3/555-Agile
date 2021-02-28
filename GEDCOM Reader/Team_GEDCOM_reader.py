@@ -1,5 +1,5 @@
 '''
-@Author: Jon Cucci
+@Author: Jon Cucci, Joe Letizia, Markell Torres, Eric Buczek
 SSW555 Proj-2
 GEDCOM Reader
 '''
@@ -7,9 +7,10 @@ GEDCOM Reader
 from Person import *
 from Family import *
 from datetime import *
+import datetime
 
 # Opens GEDCOM file as fam variable
-with open('JonathanCucci.ged.txt') as fam:
+with open('Letizia_GEDTEST.ged.txt') as fam:
     text = fam.readlines()
     # Tags broken down into indexes that correspond with their acceptable level number
     tags = [["INDI", "FAM", "HEAD", "TRLR", "NOTE"],["NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "MARR", "HUSB", "WIFE", "CHIL", "DIV"],["DATE"]]
@@ -48,6 +49,15 @@ with open('JonathanCucci.ged.txt') as fam:
                 individuals[-1].birthday = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
             except KeyError:
                 individuals[-1].birthday = next_line[-1]
+
+            #US02/US03: Birth before Marriage/Death
+            birt_check = False
+            try:
+                birt_obj = datetime.datetime.strptime(individuals[-1].birthday, '%Y-%m-%d')
+                birt_check = True
+            except:
+                pass
+            
         elif("DEAT" in newLine):
             individuals[-1].alive = False
             next_line = line_point + 1
@@ -59,6 +69,21 @@ with open('JonathanCucci.ged.txt') as fam:
                     individuals[-1].death = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                 except KeyError:
                     individuals[-1].death = next_line[-1]
+
+            #US03: Birth before Death
+            deat_check = False
+            try:
+                deat_obj = datetime.datetime.strptime(individuals[-1].death, '%Y-%m-%d')
+                deat_check = True
+            except:
+                pass
+
+            if (birt_check == True and deat_check == True and birt_obj.date() < deat_obj.date()):
+                print("Individual ID: "+individuals[-1].ID+" | VERIFIED INDIVIDUAL: birth before death")
+                pass
+            else:
+                print("Individual ID: "+individuals[-1].ID+" | INVALID INDIVIDUAL: death before birth")
+
         elif("FAM" in newLine):
             families.append(Family())
             families[-1].ID = newLine[1][1:-1]
@@ -85,7 +110,9 @@ with open('JonathanCucci.ged.txt') as fam:
                     families[-1].divorced = next_line[-1]
             else:
                 families[-1].divorced = "Date not found"
+
         elif("MARR" in newLine):
+            #marr_exists = True
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
                 try:
@@ -93,7 +120,30 @@ with open('JonathanCucci.ged.txt') as fam:
                 except KeyError:
                     families[-1].married = next_line[-1]
 
+            #US02: Birth before Marriage
+            marr_check = False
+            try:
+                marr_obj = datetime.datetime.strptime(families[-1].death, '%Y-%m-%d')
+                marr_check = True
+            except:
+                pass
+            '''
+            #US02 INCOMPLETE
+            NEED TO FIX THIS CODE, #US02 REQUIRES PULLING INDIVIDUAL IDs based on Family IDs
+
+            if (birt_check == True and marr_check == True and birt_obj.date() < marr_obj.date()):
+                print("Family ID: "+families[-1].ID+" | VERIFIED BIRTHS BEFORE MARRIAGE")
+                pass
+            else:
+                print("Family ID: "+families[-1].ID+" | INVALID FAMILY: marriage before birth")
+            '''
+
         line_point += 1
+
+    #Formatting between Validity Checks and Individual/Family List
+    print()
+    print("----------------------------------------------------------------------------------------------------------------------------")
+    print()
 
     for person in individuals:
         info = vars(person)
@@ -102,7 +152,7 @@ with open('JonathanCucci.ged.txt') as fam:
     for family in families:
         info_f = vars(family)
         print(', '.join("%s: %s" % value for value in info_f.items()))
-
+        
 '''
 
         # if there is a tag in the first index value that can be found
