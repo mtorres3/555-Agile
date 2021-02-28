@@ -1,5 +1,5 @@
 '''
-@Author: Jon Cucci, Joe Letizia, Markell Torres, Eric Buczek
+@Author: Jonathan Cucci, Joe Letizia, Markell Torres, Eric Buczek
 SSW555 Proj-2
 GEDCOM Reader
 '''
