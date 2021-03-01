@@ -9,7 +9,7 @@ from Family import *
 from datetime import *
 
 # Opens GEDCOM file as fam variable
-with open('JonathanCucci.ged.txt') as fam:
+with open('test_JonCucci.ged.txt') as fam:
     text = fam.readlines()
     # Tags broken down into indexes that correspond with their acceptable level number
     tags = [["INDI", "FAM", "HEAD", "TRLR", "NOTE"],["NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "MARR", "HUSB", "WIFE", "CHIL", "DIV"],["DATE"]]
@@ -81,7 +81,7 @@ with open('JonathanCucci.ged.txt') as fam:
                 next_line = text[line_point+1].split()
                 marr_date = text[line_point-1].split()
                 try:
-                    if(next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
+                    if(next_line[-3:] == marr_date[-3:] or next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
                         families[-1].divorced = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                     else:
                         families[-1].divorced = "INVALID DATE"
