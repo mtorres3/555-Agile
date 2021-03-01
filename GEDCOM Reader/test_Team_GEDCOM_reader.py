@@ -12,6 +12,26 @@ class TestGEDCOMReader(unittest.TestCase):
     def test_marr_before_deat(self):
         pass
 
+    #Checking Individuals existence
+    def test_individual(self):
+        self.assertIsNotNone(individuals[-1], msg=None)
+
+    #Seeing if Birth Date Exists
+    def test_birtCheck(self):
+        self.assertTrue(birt_check, msg=None)
+
+    #Seeing if Birth Date fills to date time correctly
+    def test_birtDate(self):
+        self.assertIsNotNone(birt_obj, msg=None)
+
+    #Seeing if Death Date Exists
+    def test_deatCheck(self):
+        self.assertTrue(deat_check, msg=None)
+
+    #Seeing if Death Date fills to date time correctly
+    def test_deatDate(self):
+        self.assertIsNotNone(deat_obj, msg=None)
+
         
 if __name__ == '__main__':
     unittest.main()                        

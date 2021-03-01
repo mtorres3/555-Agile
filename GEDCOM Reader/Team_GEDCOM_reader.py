@@ -3,7 +3,6 @@
 SSW555 Proj-2
 GEDCOM Reader
 '''
-
 from Person import *
 from Family import *
 from datetime import *
@@ -12,7 +11,7 @@ import datetime
 today = str(datetime.date.today())
 
 # Opens GEDCOM file as fam variable
-with open('test_JonCucci.ged.txt') as fam:
+with open('Letizia_GEDTEST.ged.txt') as fam:
     text = fam.readlines()
     # Tags broken down into indexes that correspond with their acceptable level number
     tags = [["INDI", "FAM", "HEAD", "TRLR", "NOTE"],["NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "MARR", "HUSB", "WIFE", "CHIL", "DIV"],["DATE"]]
@@ -89,7 +88,6 @@ with open('test_JonCucci.ged.txt') as fam:
                 pass
 
             if (birt_check == True and deat_check == True and birt_obj.date() < deat_obj.date()):
-                print("Individual ID: "+individuals[-1].ID+" | VERIFIED INDIVIDUAL: birth before death")
                 pass
             else:
                 print("Individual ID: "+individuals[-1].ID+" | INVALID INDIVIDUAL: death before birth")
