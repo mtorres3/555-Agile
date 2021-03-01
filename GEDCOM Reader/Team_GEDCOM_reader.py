@@ -1,5 +1,5 @@
 '''
-@Author: Jonathan Cucci, Joe Letizia, Markell Torres, Eric Buczek
+@Author: Jon Cucci
 SSW555 Proj-2
 GEDCOM Reader
 '''
@@ -7,7 +7,6 @@ GEDCOM Reader
 from Person import *
 from Family import *
 from datetime import *
-import datetime
 
 # Opens GEDCOM file as fam variable
 with open('test_JonCucci.ged.txt') as fam:
@@ -49,15 +48,6 @@ with open('test_JonCucci.ged.txt') as fam:
                 individuals[-1].birthday = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
             except KeyError:
                 individuals[-1].birthday = next_line[-1]
-
-            #US02/US03: Birth before Marriage/Death
-            birt_check = False
-            try:
-                birt_obj = datetime.datetime.strptime(individuals[-1].birthday, '%Y-%m-%d')
-                birt_check = True
-            except:
-                pass
-
         elif("DEAT" in newLine):
             individuals[-1].alive = False
             next_line = line_point + 1
@@ -69,21 +59,6 @@ with open('test_JonCucci.ged.txt') as fam:
                     individuals[-1].death = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                 except KeyError:
                     individuals[-1].death = next_line[-1]
-
-            #US03: Birth before Death
-            deat_check = False
-            try:
-                deat_obj = datetime.datetime.strptime(individuals[-1].death, '%Y-%m-%d')
-                deat_check = True
-            except:
-                pass
-
-            if (birt_check == True and deat_check == True and birt_obj.date() < deat_obj.date()):
-                print("Individual ID: "+individuals[-1].ID+" | VERIFIED INDIVIDUAL: birth before death")
-                pass
-            else:
-                print("Individual ID: "+individuals[-1].ID+" | INVALID INDIVIDUAL: death before birth")
-
         elif("FAM" in newLine):
             families.append(Family())
             families[-1].ID = newLine[1][1:-1]
@@ -101,7 +76,7 @@ with open('test_JonCucci.ged.txt') as fam:
         elif("CHIL" in newLine):
             families[-1].children.append(newLine[-1][1:-1])
 
-        elif("DIV" in newLine):
+        elif("DIV" in newLine and families[-1].married != "INVALID DATE"):
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
                 marr_date = text[line_point-1].split()
@@ -114,40 +89,28 @@ with open('test_JonCucci.ged.txt') as fam:
                     families[-1].divorced = next_line[-1]
             else:
                 families[-1].divorced = "Date not found"
-
         elif("MARR" in newLine):
-            #marr_exists = True
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
+                marr_date = [next_line[-3], months[next_line[-2]], next_line[-1]]
+                if(individuals[-1].alive == False):
+                    deat_date = individuals[-1].death.split("-")
+                elif(individuals[-2].alive == False):
+                    deat_date = individuals[-2].death.split("-")
                 try:
-                    families[-1].married = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                    if(individuals[-1].alive == False or individuals[-2].alive == False):
+                        if(marr_date[2] > deat_date[0] or (marr_date[2] == deat_date[0] and marr_date[1] > deat_date[1]) or (marr_date[1] == deat_date[1] and marr_date[0] > deat_date[2])):
+                            families[-1].married = "INVALID DATE"
+                            families[-1].divorced = "INVALID DATE"
+                        else:
+                            families[-1].married = marr_date[2] + "-" + marr_date[1] + "-" + marr_date[0]
+                    else:
+                        print("I got to 2")
+                        families[-1].married = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                 except KeyError:
                     families[-1].married = next_line[-1]
-
-            #US02: Birth before Marriage
-            marr_check = False
-            try:
-                marr_obj = datetime.datetime.strptime(families[-1].death, '%Y-%m-%d')
-                marr_check = True
-            except:
-                pass
-            '''
-            #US02 INCOMPLETE
-            NEED TO FIX THIS CODE, #US02 REQUIRES PULLING INDIVIDUAL IDs based on Family IDs
-
-            if (birt_check == True and marr_check == True and birt_obj.date() < marr_obj.date()):
-                print("Family ID: "+families[-1].ID+" | VERIFIED BIRTHS BEFORE MARRIAGE")
-                pass
-            else:
-                print("Family ID: "+families[-1].ID+" | INVALID FAMILY: marriage before birth")
-            '''
-
+        
         line_point += 1
-
-    #Formatting between Validity Checks and Individual/Family List
-    print()
-    print("----------------------------------------------------------------------------------------------------------------------------")
-    print()
 
     for person in individuals:
         info = vars(person)
