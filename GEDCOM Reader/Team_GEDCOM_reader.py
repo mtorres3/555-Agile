@@ -1,5 +1,5 @@
 '''
-@Author: Jonathan Cucci, Joe Letizia, Markell Torres, Eric Buczek
+@Author: Jonathan Cucci, Joe Letizia, Markell Torres, Erik Buczek
 SSW555 Proj-2
 GEDCOM Reader
 '''
@@ -12,7 +12,7 @@ import datetime
 today = str(datetime.date.today())
 
 # Opens GEDCOM file as fam variable
-with open('Letizia_GEDTEST.ged.txt') as fam:
+with open('test_JonCucci.ged.txt') as fam:
     text = fam.readlines()
     # Tags broken down into indexes that correspond with their acceptable level number
     tags = [["INDI", "FAM", "HEAD", "TRLR", "NOTE"],["NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "MARR", "HUSB", "WIFE", "CHIL", "DIV"],["DATE"]]
@@ -63,7 +63,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                 birt_check = True
             except:
                 pass
-            
+
         elif("DEAT" in newLine):
             individuals[-1].alive = False
             next_line = line_point + 1
@@ -126,7 +126,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                         families[-1].divorced = div_date + " - INVALID DATE - DIVORCE DATE AFTER CURRENT DATE"
                     elif(div_date > families[-1].wife_death_date or div_date > families[-1].husband_death_date): 
                         families[-1].divorced = div_date + " - INVALID DATE - DIVORCE OCCURED AFTER DEATH"
-                    elif(next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
+                    elif(next_line[-3:] == marr_date[-3:] or next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
                         families[-1].divorced = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                     else:
                         families[-1].divorced = "INVALID DATE"
@@ -158,7 +158,6 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             '''
             #US02 INCOMPLETE
             NEED TO FIX THIS CODE, #US02 REQUIRES PULLING INDIVIDUAL IDs based on Family IDs
-
             if (birt_check == True and marr_check == True and birt_obj.date() < marr_obj.date()):
                 print("Family ID: "+families[-1].ID+" | VERIFIED BIRTHS BEFORE MARRIAGE")
                 pass
@@ -180,37 +179,29 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     for family in families:
         info_f = vars(family)
         print(', '.join("%s: %s" % value for value in info_f.items()))
-        
-'''
 
+'''
         # if there is a tag in the first index value that can be found
         # in the TAG list corresponding its level val and manipulate
         #  the string to add Y
-
         if(newLine[1] in tags[int(newLine[0])]):
             newLine[1] = "|" + newLine[1] + "|" + "Y|"
-
         # Else if the list after slicing is larger than 2 pieces, and the
         # index 2 element is in the TAGS list with a corresponding level value,
         # change the 1st index to the tag and put the id after
-
         elif(len(newLine) > 2 and newLine[2] in tags[int(newLine[0])]):
             temp = newLine[2]
             newLine[2] = newLine[1]
             newLine[1] = "|" + temp + "|" + "Y|"
-
         # Else, manipulate index 1 to add N. It is not a compatable TAG.
         else:
              newLine[1] = "|" + newLine[1] + "|" + "N|"
-
         # Input / Output formatting
         line = "--> " + line
         printLine = "<--"
-
         # Concatenation
         for bit in newLine:
             printLine = printLine + " " + bit
-
         # Annnnnnnnd Print
         print(line[:-1])
         print(printLine + "\n")
