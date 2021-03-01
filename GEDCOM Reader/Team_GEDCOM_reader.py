@@ -9,6 +9,8 @@ from Family import *
 from datetime import *
 import datetime
 
+today = str(datetime.date.today())
+
 # Opens GEDCOM file as fam variable
 with open('Letizia_GEDTEST.ged.txt') as fam:
     text = fam.readlines()
@@ -45,8 +47,12 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         elif("BIRT" in newLine):
             next_line = line_point + 1
             next_line = text[next_line].split()
+            birt_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
             try:
-                individuals[-1].birthday = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                if(birt_date > today):
+                    individuals[-1].birthday = birt_date + " - INVALID DATE - BIRTH DATE AFTER CURRENT DATE"
+                else:
+                    individuals[-1].birthday = birt_date
             except KeyError:
                 individuals[-1].birthday = next_line[-1]
 
@@ -62,11 +68,15 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             individuals[-1].alive = False
             next_line = line_point + 1
             next_line = text[next_line].split()
+            deat_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
             if("DATE" not in next_line):
                 individuals[-1].death = "Not Found"
             else:
                 try:
-                    individuals[-1].death = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                    if(deat_date > today):
+                        individuals[-1].death = deat_date + " - INVALID DATE - DEATH DATE AFTER CURRENT DATE"
+                    else:
+                        individuals[-1].death = deat_date
                 except KeyError:
                     individuals[-1].death = next_line[-1]
 
@@ -105,8 +115,18 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
                 marr_date = text[line_point-1].split()
+                div_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                for person in individuals:
+                    if person.ID == families[-1].husband_id:
+                        families[-1].husband_death_date = person.death
+                    if person.ID == families[-1].wife_id:
+                        families[-1].wife_death_date = person.death
                 try:
-                    if(next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
+                    if(div_date > today):
+                        families[-1].divorced = div_date + " - INVALID DATE - DIVORCE DATE AFTER CURRENT DATE"
+                    elif(div_date > families[-1].wife_death_date or div_date > families[-1].husband_death_date): 
+                        families[-1].divorced = div_date + " - INVALID DATE - DIVORCE OCCURED AFTER DEATH"
+                    elif(next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
                         families[-1].divorced = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                     else:
                         families[-1].divorced = "INVALID DATE"
@@ -119,8 +139,12 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             #marr_exists = True
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
+                marr_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                 try:
-                    families[-1].married = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                    if(marr_date > today):
+                        families[-1].married = marr_date + " - INVALID DATE - MARRIAGE DATE AFTER CURRENT DATE"
+                    else:
+                        families[-1].married = marr_date
                 except KeyError:
                     families[-1].married = next_line[-1]
 
