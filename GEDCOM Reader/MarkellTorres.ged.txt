@@ -1,0 +1,162 @@
+0 HEAD
+0 NOTE Markell Torres
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE My Family
+1 DATE 15 FEB 2021
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME Markell Torres
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Markell /Lawrence/
+2 GIVN Markell
+2 SURN Lawrence
+2 _MARNM Torres
+1 SEX M
+1 BIRT
+2 DATE 20 OCT 1999
+1 FAMC @F1@
+0 @I2@ INDI
+1 NAME Nicholas /Torres/
+2 GIVN Nicholas
+2 SURN Torres
+2 _MARNM Torres
+1 SEX M
+1 BIRT
+2 DATE 1 MAY 1974
+1 FAMS @F2@
+1 FAMC @F3@
+0 @I3@ INDI
+1 NAME Kimberly /Thier/
+2 GIVN Kimberly
+2 SURN Thier
+2 _MARNM Torres
+1 SEX F
+1 BIRT
+2 DATE 26 OCT 1976
+1 FAMS @F1@
+1 FAMS @F2@
+1 FAMC @F4@
+0 @I4@ INDI
+1 NAME Sofia /Torres/
+2 GIVN Sofia
+2 SURN Torres
+2 _MARNM Torres
+1 SEX F
+1 BIRT
+2 DATE 18 MAY 2012
+1 FAMC @F2@
+0 @I5@ INDI
+1 NAME David /Lawrence/
+2 GIVN David
+2 SURN Lawrence
+2 _MARNM Lawrence
+1 SEX M
+1 FAMS @F1@
+1 FAMS @F5@
+0 @I6@ INDI
+1 NAME Christina /D'Ambra/
+2 GIVN Christina
+2 SURN D'Ambra
+2 _MARNM D'Ambra
+1 SEX F
+1 FAMS @F5@
+0 @I7@ INDI
+1 NAME Gavin /Lawrence/
+2 GIVN Gavin
+2 SURN Lawrence
+2 _MARNM Lawrence
+1 SEX M
+1 BIRT
+2 DATE 31 JAN 2008
+1 FAMC @F5@
+0 @I8@ INDI
+1 NAME Gabriella /Lawrence/
+2 GIVN Gabriella
+2 SURN Lawrence
+2 _MARNM Lawrence
+1 SEX F
+1 BIRT
+2 DATE 2012
+1 FAMC @F5@
+0 @I9@ INDI
+1 NAME Leonard /Thier/
+2 GIVN Leonard
+2 SURN Thier
+2 _MARNM Thier
+1 SEX M
+1 BIRT
+2 DATE 5 MAR 1947
+1 FAMS @F4@
+0 @I10@ INDI
+1 NAME Patricia /Thier/
+2 GIVN Patricia
+2 SURN Thier
+2 _MARNM Thier
+1 SEX F
+1 DEAT Y
+2 DATE AUG 2000
+1 FAMS @F4@
+0 @I11@ INDI
+1 NAME Nicholas /Torres/
+2 GIVN Nicholas
+2 SURN Torres
+2 _MARNM Torres
+1 SEX M
+1 BIRT
+2 DATE 19 SEP 1949
+1 FAMS @F3@
+0 @I12@ INDI
+1 NAME Mildred /Fernandez/
+2 GIVN Mildred
+2 SURN Fernandez
+2 _MARNM Torres
+1 SEX F
+1 BIRT
+2 DATE 18 OCT 1951
+1 FAMS @F3@
+0 @F1@ FAM
+1 HUSB @I5@
+1 WIFE @I3@
+1 CHIL @I1@
+1 MARR
+2 DATE 9 MAY 1998
+1 DIV
+2 DATE 13 SEP 2004
+1 _CURRENT N
+0 @F2@ FAM
+1 HUSB @I2@
+1 WIFE @I3@
+1 CHIL @I4@
+1 MARR
+2 DATE 19 JUN 2010
+2 PLAC Long Branch, NJ
+1 _CURRENT Y
+0 @F3@ FAM
+1 HUSB @I11@
+1 WIFE @I12@
+1 CHIL @I2@
+1 _CURRENT Y
+0 @F4@ FAM
+1 HUSB @I9@
+1 WIFE @I10@
+1 CHIL @I3@
+1 MARR
+2 DATE 11 NOV 1980
+1 _CURRENT Y
+0 @F5@ FAM
+1 HUSB @I5@
+1 WIFE @I6@
+1 CHIL @I7@
+1 CHIL @I8@
+1 MARR
+2 DATE 5 AUG 2008
+1 DIV
+2 DATE 28 SEP 2016
+1 _CURRENT N
+0 TRLR
