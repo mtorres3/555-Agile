@@ -124,6 +124,8 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                         families[-1].divorced = div_date + " - INVALID DATE - DIVORCE DATE AFTER CURRENT DATE"
                     elif(div_date > families[-1].wife_death_date or div_date > families[-1].husband_death_date):
                         families[-1].divorced = div_date + " - INVALID DATE - DIVORCE OCCURED AFTER DEATH"
+
+                    #US04: Marriage before divorce
                     elif(next_line[-3:] == marr_date[-3:] or next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
                         families[-1].divorced = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                     else:
@@ -137,15 +139,33 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             #marr_exists = True
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
-                marr_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                marr_date_string = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                marr_date_array = [next_line[-3], months[next_line[-2]], next_line[-1]]
                 try:
-                    if(marr_date > today):
-                        families[-1].married = marr_date + " - INVALID DATE - MARRIAGE DATE AFTER CURRENT DATE"
+                    if(marr_date_string > today):
+                        families[-1].married = marr_date_string + " - INVALID DATE - MARRIAGE DATE AFTER CURRENT DATE"
                     else:
-                        families[-1].married = marr_date
+                        families[-1].married = marr_date_string
                 except KeyError:
                     families[-1].married = next_line[-1]
-
+                    
+            #US05: Marriage before death
+                if(individuals[-1].alive == False):
+                    deat_date = individuals[-1].death.split("-")
+                elif(individuals[-2].alive == False):
+                    deat_date = individuals[-2].death.split("-")
+                try:
+                    if(individuals[-1].alive == False or individuals[-2].alive == False):
+                        if(marr_date_array[2] > deat_date[0] or (marr_date[2] == deat_date[0] and marr_date[1] > deat_date[1]) or (marr_date[1] == deat_date[1] and marr_date[0] > deat_date[2])):
+                            families[-1].married = "INVALID DATE"
+                            families[-1].divorced = "INVALID DATE"
+                        else:
+                            families[-1].married = marr_date_array[2] + "-" + marr_date_array[1] + "-" + marr_date_array[0]
+                    else:
+                        families[-1].married = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                except KeyError:
+                    families[-1].married = next_line[-1]
+                
             #US02: Birth before Marriage
             marr_check = False
             try:
