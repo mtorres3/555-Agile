@@ -1,5 +1,4 @@
 0 HEAD
-
 0 @I1@ INDI
 1 NAME A /Cucci/
 2 GIVN A

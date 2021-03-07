@@ -185,6 +185,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         line_point += 1
 
+
     # Updates everyones age
     for individual in individuals:
 
