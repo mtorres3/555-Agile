@@ -90,6 +90,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             if (birt_check == True and deat_check == True and birt_obj.date() < deat_obj.date()):
                 pass
             else:
+                individuals[-1].death = "INVALID DATE"
                 print("Individual ID: "+individuals[-1].ID+" | INVALID INDIVIDUAL: death before birth")
 
         elif("FAM" in newLine):
@@ -209,8 +210,9 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     for individual in individuals:
 
         today = date.today()
-        birth = individual.birthday.split('-')
-        birth = date(int(birth[0]), int(birth[1]), int(birth[2]))
+        if (individual.birthday != "INVALID DATE"):
+            birth = individual.birthday.split('-')
+            birth = date(int(birth[0]), int(birth[1]), int(birth[2]))
 
         if individual.birthday == "NA":
             individual.age = 0
@@ -218,7 +220,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         elif individual.death == "NA":
             individual.age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
 
-        elif individual.death != "NA":
+        elif (individual.death != "NA" and individual.death != "INVALID DATE"):
             death = individual.death.split('-')
             death = date(int(death[0]), int(death[1]), int(death[2]))
             individual.age = death.year - birth.year - ((death.month, death.day) < (birth.month, birth.day))
