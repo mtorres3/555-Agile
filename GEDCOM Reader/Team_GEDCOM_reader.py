@@ -185,6 +185,28 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         line_point += 1
 
+
+    # Updates everyones age
+    for individual in individuals:
+
+        today = date.today()
+        birth = individual.birthday.split('-')
+        birth = date(int(birth[0]), int(birth[1]), int(birth[2]))
+
+        if individual.birthday == "NA":
+            individual.age = 0
+
+        elif individual.death == "NA":
+            individual.age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+
+        elif individual.death != "NA":
+            death = individual.death.split('-')
+            death = date(int(death[0]), int(death[1]), int(death[2]))
+            individual.age = death.year - birth.year - ((death.month, death.day) < (birth.month, birth.day))
+
+        else: 
+            individual.age = 0
+
     #Formatting between Validity Checks and Individual/Family List
     print()
     print("----------------------------------------------------------------------------------------------------------------------------")

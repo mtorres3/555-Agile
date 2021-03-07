@@ -1,3 +1,4 @@
+
 class Family:
     def __init__(self, ID = "", Married = "Date Not Found", Divorced = "NA", Husband_ID = "", Husband_Name = "", Husband_death_date = "NA" ,Wife_ID = "", Wife_Name = "", Wife_death_date = "NA", Children = None):
         self.ID = ID # String
