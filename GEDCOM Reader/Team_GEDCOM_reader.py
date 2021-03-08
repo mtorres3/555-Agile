@@ -104,6 +104,9 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             for person in individuals:
                 if person.ID == families[-1].husband_id:
                     families[-1].husband_name = person.name
+                    #US21: Correct gender for role
+                    if(person.gender == "F"):
+                        person.gender = "INVALID GENDER"
                     person.spouse.append(families[-1].wife_id)
 
         elif("WIFE" in newLine):
@@ -113,6 +116,9 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             for person in individuals:
                 if person.ID == families[-1].wife_id:
                     families[-1].wife_name = person.name
+                    #US21: Correct gender for role
+                    if(person.gender == "M"):
+                        person.gender = "INVALID GENDER"
                     person.spouse.append(families[-1].husband_id)
 
         elif("CHIL" in newLine):
@@ -239,14 +245,19 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     print()
     print("----------------------------------------------------------------------------------------------------------------------------")
     print()
-
+    
+    #US40: Include input line numbers
+    line_count = 0
+    
     for person in individuals:
         info = vars(person)
-        print(', '.join("%s: %s" % value for value in info.items()))
+        print(line_count,', '.join("%s: %s" % value for value in info.items()))
+        line_count += 1
 
     for family in families:
         info_f = vars(family)
-        print(', '.join("%s: %s" % value for value in info_f.items()))
+        print(line_count,', '.join("%s: %s" % value for value in info_f.items()))
+        line_count += 1
 
 '''
         # if there is a tag in the first index value that can be found
