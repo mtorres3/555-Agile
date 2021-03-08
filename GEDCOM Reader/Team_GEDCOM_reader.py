@@ -49,7 +49,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             birt_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
             try:
                 if(birt_date > today):
-                    individuals[-1].birthday = birt_date + " - INVALID DATE - BIRTH DATE AFTER CURRENT DATE"
+                    individuals[-1].birthday = "INVALID DATE"
                 else:
                     individuals[-1].birthday = birt_date
             except KeyError:
@@ -73,7 +73,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             else:
                 try:
                     if(deat_date > today):
-                        individuals[-1].death = deat_date + " - INVALID DATE - DEATH DATE AFTER CURRENT DATE"
+                        individuals[-1].death = "INVALID DATE"
                     else:
                         individuals[-1].death = deat_date
                 except KeyError:
@@ -90,40 +90,55 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             if (birt_check == True and deat_check == True and birt_obj.date() < deat_obj.date()):
                 pass
             else:
+                individuals[-1].death = "INVALID DATE"
                 print("Individual ID: "+individuals[-1].ID+" | INVALID INDIVIDUAL: death before birth")
 
         elif("FAM" in newLine):
             families.append(Family())
             families[-1].ID = newLine[1][1:-1]
+
         elif("HUSB" in newLine):
+            next_line = text[line_point+1].split()
             families[-1].husband_id = newLine[-1][1:-1]
+            families[-1].wife_id = next_line[-1][1:-1]
             for person in individuals:
                 if person.ID == families[-1].husband_id:
                     families[-1].husband_name = person.name
+                    person.spouse.append(families[-1].wife_id)
+
         elif("WIFE" in newLine):
+            prev_line = text[line_point-1].split()
             families[-1].wife_id = newLine[-1][1:-1]
+            families[-1].husband_id = prev_line[-1][1:-1]
             for person in individuals:
                 if person.ID == families[-1].wife_id:
                     families[-1].wife_name = person.name
+                    person.spouse.append(families[-1].husband_id)
 
         elif("CHIL" in newLine):
             families[-1].children.append(newLine[-1][1:-1])
+            for person in individuals:
+                if person.ID == families[-1].husband_id:
+                    person.child.append(newLine[-1][1:-1])
+                if person.ID == families[-1].wife_id:
+                    person.child.append(newLine[-1][1:-1])
 
         elif("DIV" in newLine):
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
                 marr_date = text[line_point-1].split()
                 div_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+
                 for person in individuals:
                     if person.ID == families[-1].husband_id:
-                        families[-1].husband_death_date = person.death
+                        temp_husband_death = person.death
                     if person.ID == families[-1].wife_id:
-                        families[-1].wife_death_date = person.death
+                        temp_wife_death = person.death
                 try:
                     if(div_date > today):
-                        families[-1].divorced = div_date + " - INVALID DATE - DIVORCE DATE AFTER CURRENT DATE"
-                    elif(div_date > families[-1].wife_death_date or div_date > families[-1].husband_death_date):
-                        families[-1].divorced = div_date + " - INVALID DATE - DIVORCE OCCURED AFTER DEATH"
+                        families[-1].divorced = "INVALID DATE"
+                    elif(div_date > temp_wife_death or div_date > temp_husband_death):
+                        families[-1].divorced = "INVALID DATE"
 
                     #US04: Marriage before divorce
                     elif(next_line[-3:] == marr_date[-3:] or next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
@@ -136,19 +151,36 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                 families[-1].divorced = "Date not found"
 
         elif("MARR" in newLine):
-            #marr_exists = True
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
                 marr_date_string = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                 marr_date_array = [next_line[-3], months[next_line[-2]], next_line[-1]]
+
+                for person in individuals:
+                    if person.ID == families[-1].husband_id:
+                        temp_husband_birth = person.birthday
+                        temp_husband_birth_date = datetime.datetime.strptime(person.birthday, '%Y-%m-%d')
+                        marriage_date = datetime.datetime.strptime(marr_date_string, '%Y-%m-%d')
+                        husband_age = marriage_date.year - temp_husband_birth_date.year - ((marriage_date.month, marriage_date.day) < (temp_husband_birth_date.month, temp_husband_birth_date.day))
+
+                    if person.ID == families[-1].wife_id:
+                        temp_wife_birth = person.birthday
+                        temp_wife_birth_date = datetime.datetime.strptime(person.birthday, '%Y-%m-%d')
+                        marriage_date = datetime.datetime.strptime(marr_date_string, '%Y-%m-%d')
+                        wife_age = marriage_date.year - temp_wife_birth_date.year - ((marriage_date.month, marriage_date.day) < (temp_wife_birth_date.month, temp_wife_birth_date.day))
                 try:
                     if(marr_date_string > today):
-                        families[-1].married = marr_date_string + " - INVALID DATE - MARRIAGE DATE AFTER CURRENT DATE"
+                        families[-1].married = "INVALID DATE"
+                    elif(husband_age < 14 or wife_age < 14):
+                        families[-1].married = "INVALID MARRIAGE AGE"
+                    elif(temp_husband_birth > marr_date_string or temp_wife_birth > marr_date_string):
+                        families[-1].married = "INVALID DATE"
+                        print("Family ID: "+families[-1].ID+" | INVALID INDIVIDUAL: marriage before birth")
                     else:
                         families[-1].married = marr_date_string
                 except KeyError:
                     families[-1].married = next_line[-1]
-                    
+
             #US05: Marriage before death
                 if(individuals[-1].alive == False):
                     deat_date = individuals[-1].death.split("-")
@@ -156,34 +188,52 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                     deat_date = individuals[-2].death.split("-")
                 try:
                     if(individuals[-1].alive == False or individuals[-2].alive == False):
-                        if(marr_date_array[2] > deat_date[0] or (marr_date[2] == deat_date[0] and marr_date[1] > deat_date[1]) or (marr_date[1] == deat_date[1] and marr_date[0] > deat_date[2])):
+                        if(families[-1].married == "INVALID DATE"):
+                            pass
+                        elif(families[-1].married == "INVALID MARRIAGE AGE"):
+                            pass
+                        elif(marr_date_array[2] > deat_date[0] or (marr_date[2] == deat_date[0] and marr_date[1] > deat_date[1]) or (marr_date[1] == deat_date[1] and marr_date[0] > deat_date[2])):
                             families[-1].married = "INVALID DATE"
                             families[-1].divorced = "INVALID DATE"
                         else:
                             families[-1].married = marr_date_array[2] + "-" + marr_date_array[1] + "-" + marr_date_array[0]
+                    elif(families[-1].married == "INVALID DATE"):
+                        pass
+                    elif(families[-1].married == "INVALID MARRIAGE AGE"):
+                        pass
                     else:
                         families[-1].married = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
                 except KeyError:
                     families[-1].married = next_line[-1]
-                
-            #US02: Birth before Marriage
-            marr_check = False
-            try:
-                marr_obj = datetime.datetime.strptime(families[-1].death, '%Y-%m-%d')
-                marr_check = True
-            except:
-                pass
-            '''
-            #US02 INCOMPLETE
-            NEED TO FIX THIS CODE, #US02 REQUIRES PULLING INDIVIDUAL IDs based on Family IDs
-            if (birt_check == True and marr_check == True and birt_obj.date() < marr_obj.date()):
-                print("Family ID: "+families[-1].ID+" | VERIFIED BIRTHS BEFORE MARRIAGE")
-                pass
-            else:
-                print("Family ID: "+families[-1].ID+" | INVALID FAMILY: marriage before birth")
-            '''
+
 
         line_point += 1
+
+
+    # Updates everyones age
+    for individual in individuals:
+
+        today = date.today()
+        if (individual.birthday != "INVALID DATE"):
+            birth = individual.birthday.split('-')
+            birth = date(int(birth[0]), int(birth[1]), int(birth[2]))
+
+        if individual.birthday == "NA":
+            individual.age = 0
+
+        elif individual.death == "NA":
+            individual.age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+
+        elif (individual.death != "NA" and individual.death != "INVALID DATE"):
+            death = individual.death.split('-')
+            death = date(int(death[0]), int(death[1]), int(death[2]))
+            individual.age = death.year - birth.year - ((death.month, death.day) < (birth.month, birth.day))
+
+        else:
+            individual.age = 0
+
+        if (individual.age >= 150):
+            individual.age = "INVALID AGE"
 
     #Formatting between Validity Checks and Individual/Family List
     print()
