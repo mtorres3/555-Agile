@@ -2,20 +2,22 @@ import unittest
 from Team_GEDCOM_reader import *
 
 class TestGEDCOMReader(unittest.TestCase):
-    '''
+
+    #Checking marriage befpre death
     def test_marr_before_div(self):
-        self.assertTrue(families[0].divorced == "1975-09-13", msg="Error1")
-        self.assertTrue(families[1].divorced == "1980-10-13", msg="Error2")
-        self.assertTrue(families[2].divorced == "1980-09-14", msg="Error3")
-        self.assertTrue(families[3].divorced == "1980-09-13", msg="Error4")
-        self.assertTrue(families[4].divorced == "INVALID DATE", msg="Error5")
-    '''
+        self.assertTrue(families[0].divorced == "2003-02-18", msg="Error1")
+        self.assertTrue(families[1].divorced == "NA", msg="Error2")
+        self.assertTrue(families[2].divorced == "NA", msg="Error3")
+        self.assertTrue(families[3].divorced == "NA", msg="Error4")
+        self.assertTrue(families[4].divorced == "NA", msg="Error5")
+
+    #Checking marriage before death date
     def test_marr_before_deat(self):
-        self.assertTrue(families[0].married == "INVALID DATE", msg="Error1")
-        self.assertTrue(families[1].married == "1980-09-13", msg="Error2")
-        self.assertTrue(families[2].married == "1980-09-13", msg="Error3")
-        self.assertTrue(families[3].married == "INVALID DATE", msg="Error4")
-        self.assertTrue(families[4].married == "INVALID DATE", msg="Error5")
+        self.assertTrue(families[0].married == "1992-03-22", msg="Error1")
+        self.assertTrue(families[1].married == "1940-01-3", msg="Error2")
+        self.assertTrue(families[2].married == "1969-02-2", msg="Error3")
+        self.assertTrue(families[3].married == "1963-09-22", msg="Error4")
+        self.assertTrue(families[4].married == "1994-04-13", msg="Error5")
 
     #Checking Individuals existence
     def test_individual(self):
