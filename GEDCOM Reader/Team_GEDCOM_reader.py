@@ -5,9 +5,13 @@ GEDCOM Reader
 '''
 from Person import *
 from Family import *
+import os.path
+from os import path
 from datetime import *
 import datetime
-
+import sqlite3
+from functions import *
+today = str(datetime.date.today())
 today = str(datetime.date.today())
 
 # Opens GEDCOM file as fam variable
@@ -258,6 +262,65 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         info_f = vars(family)
         print(line_count,', '.join("%s: %s" % value for value in info_f.items()))
         line_count += 1
+
+    conn = sqlite3.connect('GEDCOM.db')
+    c = conn.cursor()
+    c.execute("DROP TABLE IF EXISTS INDIVIDUALS")
+    c.execute("DROP TABLE IF EXISTS FAMILIES")
+
+    c.execute(''' CREATE TABLE INDIVIDUALS (
+                    [ID] TEXT PRIMARY KEY, 
+                    [name] TEXT, 
+                    [gender] TEXT,
+                    [birthday] TEXT, 
+                    [age] INTEGER, 
+                    [alive] BOOLEAN, 
+                    [death] TEXT, 
+                    [children] TEXT,
+                    [spouse] TEXT
+            )''')
+        
+    c.execute(''' CREATE TABLE FAMILIES (
+                    [ID] TEXT PRIMARY KEY, 
+                    [married] TEXT, 
+                    [divorced] TEXT,
+                    [husband_id] TEXT, 
+                    [husband_name] TEXT, 
+                    [wife_id] TEXT, 
+                    [wife_name] TEXT,
+                    [children] TEXT
+            )''')
+
+    for person in individuals:
+
+        info = list(vars(person).values())
+        #print(info)
+        for index in range(len(info)):
+            if type(info[index]) is list:
+                info[index] = ", ".join(ids_to_names(info[index], individuals))
+        #print(info)
+
+        
+        sql = '''INSERT INTO INDIVIDUALS (ID, name, gender, birthday, age, alive, death, children, spouse)
+                 VALUES(?,?,?,?,?,?,?,?,?)'''
+        c.execute(sql, info)
+
+
+    for family in families:
+
+        info = list(vars(family).values())
+        #print(info)
+        for index in range(len(info)):
+            if type(info[index]) is list:
+                info[index] = ", ".join(ids_to_names(info[index], individuals))
+        #print(info)
+        sql = '''INSERT INTO FAMILIES (ID, married, divorced, husband_id, husband_name, wife_id, wife_name, children)
+                 VALUES(?,?,?,?,?,?,?,?)'''
+
+        c.execute(sql, info)
+
+    conn.commit()
+    print("successful")
 
 '''
         # if there is a tag in the first index value that can be found
