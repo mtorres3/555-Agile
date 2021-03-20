@@ -26,10 +26,12 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     for line in text:
         newLine = line.split()
 
-        # if ("DATE" in newLine):
-        #     date_to_check = newLine[-3:]
-        #     if validate_date(date) == False:
-        #         raise "Not a valid date."
+        # US42 Date Validation
+        if ("DATE" in newLine):
+            date_to_check = create_DATE(newLine[-3:])
+            if not validate_date(date_to_check):
+                print("Individual ID: {} | Invalid date input: {}".format(individuals[-1].ID, date_to_check))
+                raise IndexError
 
         if ("INDI" in newLine):
             # pointer += 1

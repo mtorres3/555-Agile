@@ -22,22 +22,7 @@ months = {
 # Tags broken down into indexes that correspond with their acceptable level number
 tags = [["INDI", "FAM", "HEAD", "TRLR", "NOTE"],["NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "MARR", "HUSB", "WIFE", "CHIL", "DIV"],["DATE"]]
 
-# Where id is ID to find, L is list of people
-# Converts from ID to Name
-
-def is_Leap_Year(year):
-    year = int(year)
-    if (year % 4) == 0:
-        if (year % 100) == 0:
-            if (year % 400) == 0:
-                return True
-            else:
-                return False
-        else:
-            return True
-    else:
-        return False
-
+# searches list L for person with ID
 def ids_to_names(ids, L):
     names = []
     for person in L:
@@ -60,7 +45,15 @@ def date_list_to_string(L):
     date = '-'.join(L)
     return date
 
-def validate_date(L):
-    print()
+# validates a date in the form of a string yyyy-mm-dd
+def validate_date(S):
+    date = date_string_to_list(S)
+    try :
+        datetime.datetime(date[0],date[1],date[2])
+        return True
+    except ValueError :
+        return False
 
-#validate_date(['2', 'FEB', '1969'])
+# day month year list to year-month-day
+def create_DATE(L):
+    return date_list_to_string([L[2], months[L[1]][0], L[0]])
