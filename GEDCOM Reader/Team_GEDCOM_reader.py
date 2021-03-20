@@ -10,92 +10,51 @@ from os import path
 from datetime import *
 import datetime
 import sqlite3
+from extra_functions import *
 from functions import *
-today = str(datetime.date.today())
-today = str(datetime.date.today())
+
 
 # Opens GEDCOM file as fam variable
 with open('Letizia_GEDTEST.ged.txt') as fam:
     text = fam.readlines()
-    # Tags broken down into indexes that correspond with their acceptable level number
-    tags = [["INDI", "FAM", "HEAD", "TRLR", "NOTE"],["NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "MARR", "HUSB", "WIFE", "CHIL", "DIV"],["DATE"]]
-    months = {
-        'JAN' : "01",
-        'FEB' : "02",
-        'MAR' : "03",
-        'APR' : "04",
-        'MAY' : "05",
-        'JUN' : "06",
-        'JUL' : "07",
-        'AUG' : "08",
-        'SEP' : "09",
-        'OCT' : "10",
-        'NOV' : "11",
-        'DEC' : "12"}
     individuals = []
     families = []
+    today = str(datetime.date.today())
     line_point = 0
 
     # Goes through each line of the GEDCOM file
     for line in text:
         newLine = line.split()
+
+        # if ("DATE" in newLine):
+        #     date_to_check = newLine[-3:]
+        #     if validate_date(date) == False:
+        #         raise "Not a valid date."
+
         if ("INDI" in newLine):
             # pointer += 1
             individuals.append(Person())
             individuals[-1].ID = newLine[1][1:-1]
+
         elif("NAME" in newLine):
             individuals[-1].name = newLine[-2] + " " + newLine[-1][1:-1]
+
         elif("SEX" in newLine):
             individuals[-1].gender = newLine[-1]
+        
         elif("BIRT" in newLine):
             next_line = line_point + 1
             next_line = text[next_line].split()
-            birt_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
-            try:
-                if(birt_date > today):
-                    individuals[-1].birthday = "INVALID DATE"
-                else:
-                    individuals[-1].birthday = birt_date
-            except KeyError:
-                individuals[-1].birthday = next_line[-1]
-
-            #US02/US03: Birth before Marriage/Death
-            birt_check = False
-            try:
-                birt_obj = datetime.datetime.strptime(individuals[-1].birthday, '%Y-%m-%d')
-                birt_check = True
-            except:
-                pass
+            birt_date = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
+            individuals[-1].birthday = create_BIRT(birt_date)
 
         elif("DEAT" in newLine):
             individuals[-1].alive = False
             next_line = line_point + 1
             next_line = text[next_line].split()
-            deat_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
-            if("DATE" not in next_line):
-                individuals[-1].death = "Not Found"
-            else:
-                try:
-                    if(deat_date > today):
-                        individuals[-1].death = "INVALID DATE"
-                    else:
-                        individuals[-1].death = deat_date
-                except KeyError:
-                    individuals[-1].death = next_line[-1]
-
-            #US03: Birth before Death
-            deat_check = False
-            try:
-                deat_obj = datetime.datetime.strptime(individuals[-1].death, '%Y-%m-%d')
-                deat_check = True
-            except:
-                pass
-
-            if (birt_check == True and deat_check == True and birt_obj.date() < deat_obj.date()):
-                pass
-            else:
-                individuals[-1].death = "INVALID DATE"
-                print("Individual ID: "+individuals[-1].ID+" | INVALID INDIVIDUAL: death before birth")
+            deat_date = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
+            individuals[-1].death = create_DEAT(deat_date, next_line)
+            individuals[-1] = validate_DEAT(individuals[-1])
 
         elif("FAM" in newLine):
             families.append(Family())
@@ -114,9 +73,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                     person.spouse.append(families[-1].wife_id)
 
         elif("WIFE" in newLine):
-            prev_line = text[line_point-1].split()
             families[-1].wife_id = newLine[-1][1:-1]
-            families[-1].husband_id = prev_line[-1][1:-1]
             for person in individuals:
                 if person.ID == families[-1].wife_id:
                     families[-1].wife_name = person.name
@@ -126,18 +83,16 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                     person.spouse.append(families[-1].husband_id)
 
         elif("CHIL" in newLine):
-            families[-1].children.append(newLine[-1][1:-1])
-            for person in individuals:
-                if person.ID == families[-1].husband_id:
-                    person.child.append(newLine[-1][1:-1])
-                if person.ID == families[-1].wife_id:
-                    person.child.append(newLine[-1][1:-1])
+            changes = create_CHIL(families, individuals, newLine)
+            individuals = changes[0]
+            families = changes[1]
+
 
         elif("DIV" in newLine):
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
                 marr_date = text[line_point-1].split()
-                div_date = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                div_date = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
 
                 for person in individuals:
                     if person.ID == families[-1].husband_id:
@@ -151,8 +106,8 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                         families[-1].divorced = "INVALID DATE"
 
                     #US04: Marriage before divorce
-                    elif(next_line[-3:] == marr_date[-3:] or next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]] > months[marr_date[-2]]) or (months[next_line[-2]] == months[marr_date[-2]] and next_line[-3] > marr_date[-3])):
-                        families[-1].divorced = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                    elif(next_line[-3:] == marr_date[-3:] or next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]][0] > months[marr_date[-2]][0]) or (months[next_line[-2]][0] == months[marr_date[-2]][0] and next_line[-3] > marr_date[-3])):
+                        families[-1].divorced = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
                     else:
                         families[-1].divorced = "INVALID DATE"
                 except KeyError:
@@ -163,8 +118,8 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         elif("MARR" in newLine):
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
-                marr_date_string = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
-                marr_date_array = [next_line[-3], months[next_line[-2]], next_line[-1]]
+                marr_date_string = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
+                marr_date_array = [next_line[-3], months[next_line[-2]][0], next_line[-1]]
 
                 for person in individuals:
                     if person.ID == families[-1].husband_id:
@@ -212,7 +167,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                     elif(families[-1].married == "INVALID MARRIAGE AGE"):
                         pass
                     else:
-                        families[-1].married = next_line[-1] + "-" + months[next_line[-2]] + "-" + next_line[-3]
+                        families[-1].married = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
                 except KeyError:
                     families[-1].married = next_line[-1]
 
@@ -269,38 +224,37 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     c.execute("DROP TABLE IF EXISTS FAMILIES")
 
     c.execute(''' CREATE TABLE INDIVIDUALS (
-                    [ID] TEXT PRIMARY KEY, 
-                    [name] TEXT, 
+                    [ID] TEXT PRIMARY KEY,
+                    [name] TEXT,
                     [gender] TEXT,
-                    [birthday] TEXT, 
-                    [age] INTEGER, 
-                    [alive] BOOLEAN, 
-                    [death] TEXT, 
+                    [birthday] TEXT,
+                    [age] INTEGER,
+                    [alive] BOOLEAN,
+                    [death] TEXT,
                     [children] TEXT,
                     [spouse] TEXT
             )''')
-        
+
     c.execute(''' CREATE TABLE FAMILIES (
-                    [ID] TEXT PRIMARY KEY, 
-                    [married] TEXT, 
+                    [ID] TEXT PRIMARY KEY,
+                    [married] TEXT,
                     [divorced] TEXT,
-                    [husband_id] TEXT, 
-                    [husband_name] TEXT, 
-                    [wife_id] TEXT, 
+                    [husband_id] TEXT,
+                    [husband_name] TEXT,
+                    [wife_id] TEXT,
                     [wife_name] TEXT,
                     [children] TEXT
             )''')
 
+
     for person in individuals:
 
         info = list(vars(person).values())
-        #print(info)
+
         for index in range(len(info)):
             if type(info[index]) is list:
                 info[index] = ", ".join(ids_to_names(info[index], individuals))
-        #print(info)
 
-        
         sql = '''INSERT INTO INDIVIDUALS (ID, name, gender, birthday, age, alive, death, children, spouse)
                  VALUES(?,?,?,?,?,?,?,?,?)'''
         c.execute(sql, info)
@@ -309,11 +263,11 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     for family in families:
 
         info = list(vars(family).values())
-        #print(info)
+
         for index in range(len(info)):
             if type(info[index]) is list:
                 info[index] = ", ".join(ids_to_names(info[index], individuals))
-        #print(info)
+
         sql = '''INSERT INTO FAMILIES (ID, married, divorced, husband_id, husband_name, wife_id, wife_name, children)
                  VALUES(?,?,?,?,?,?,?,?)'''
 
@@ -321,4 +275,3 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
     conn.commit()
     print("successful")
-
