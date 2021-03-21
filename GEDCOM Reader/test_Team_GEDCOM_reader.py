@@ -1,5 +1,7 @@
 import unittest
 from Team_GEDCOM_reader import *
+from functions import *
+from extra_functions import *
 
 class TestGEDCOMReader(unittest.TestCase):
 
@@ -25,37 +27,37 @@ class TestGEDCOMReader(unittest.TestCase):
 
     #Seeing if Birth Date Exists
     def test_birtCheck(self):
-        self.assertTrue(birt_check, msg=None)
+        self.assertTrue(birt_date, msg=None)
 
     #Seeing if Birth Date fills to date time correctly
     def test_birtDate(self):
-        self.assertIsNotNone(birt_obj, msg=None)
+        self.assertIsNotNone(birt_date, msg=None)
 
     #Seeing if Death Date Exists
     def test_deatCheck(self):
-        self.assertTrue(deat_check, msg=None)
+        self.assertTrue(deat_date, msg=None)
 
     #Seeing if Death Date fills to date time correctly
     def test_deatDate(self):
-        self.assertIsNotNone(deat_obj, msg=None)
+        self.assertIsNotNone(deat_date, msg=None)
         
     # Checks to see if individual ID matches the GEDCOM file
-    def individual_ID(self):
+    def test_individual_ID(self):
         self.assertEqual(individuals[0].ID, "I1")
 
     # Checks to see if fam ID matches GEDCOM file, as well as the husband and wife IDs and Names.
-    def family_ID(self):
+    def test_family_ID(self):
         self.assertEqual(families[0].ID, "F1")
-        self.assertEqual(families[0].husband_id, "I1")
-        self.assertEqual(families[0].wife_id, "I2")
+        self.assertEqual(families[0].husband_id, "I2")
+        self.assertEqual(families[0].wife_id, "I3")
 
     # Testing to see if Children match to the correct family
-    def family_children(self):
+    def test_family_children(self):
         self.assertEqual(families[1].ID, "F2")
-        self.assertEqual(families[1].children, ["I1", "I5"])
+        self.assertEqual(families[1].children, ["I2", "I8", "I9"])
 
     # Testing to ensure Unique Individual IDs
-    def unique_individual_IDs(self):
+    def test_unique_individual_IDs(self):
         unique_IDs = []
         for num in range(len(individuals)):
             unique_IDs.append(individuals[num].ID)
@@ -63,7 +65,7 @@ class TestGEDCOMReader(unittest.TestCase):
             self.assertEqual(unique_IDs.count(unique_IDs[ID]), 1)
 
     # Testing to ensure Unique Family IDs
-    def unique_family_IDs(self):
+    def test_unique_family_IDs(self):
         unique_Fam_IDs = []
         for num in range(len(families)):
             unique_Fam_IDs.append(families[num].ID)
