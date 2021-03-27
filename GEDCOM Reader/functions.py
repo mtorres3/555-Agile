@@ -90,8 +90,8 @@ def check_DIV(family, individuals, next_line, marr_date, div_date):
             family.divorced = "INVALID DATE"
 
         #US04: Marriage before divorce
-        elif(next_line[-3:] == marr_date[-3:] or next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and months[next_line[-2]][0] > months[marr_date[-2]][0]) or (months[next_line[-2]][0] == months[marr_date[-2]][0] and next_line[-3] > marr_date[-3])):
-            family.divorced = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
+        elif(next_line[-3:] == marr_date[-3:] or next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and MONTHS[next_line[-2]][0] > MONTHS[marr_date[-2]][0]) or (MONTHS[next_line[-2]][0] == MONTHS[marr_date[-2]][0] and next_line[-3] > marr_date[-3])):
+            family.divorced = next_line[-1] + "-" + MONTHS[next_line[-2]][0] + "-" + next_line[-3]
         else:
             family.divorced = "INVALID DATE"
     except KeyError:
@@ -119,7 +119,7 @@ def check_MARR_before_DEAT(family, individuals, next_line, marr_date_string, mar
         elif(family.married == "INVALID MARRIAGE AGE"):
             pass
         else:
-            family.married = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
+            family.married = next_line[-1] + "-" + MONTHS[next_line[-2]][0] + "-" + next_line[-3]
     except KeyError:
         family.married = next_line[-1]
         
@@ -149,3 +149,28 @@ def check_MARR_after_BIRT(family, individuals, next_line, marr_date_string, marr
             family.married = marr_date_string
     except KeyError:
         family.married = next_line[-1]   
+
+# US 13
+def sibling_spacing(family, individuals):
+    if len(family.children) in [0,1]:
+        return True
+    for s1 in family.children:
+        for s2 in family.children:
+            try:
+                s1_ = id_to_person(s1, individuals)
+                s1_BIRT = date_string_to_list(s1_.birthday)
+                s1_BIRT = datetime.datetime(s1_BIRT[0], s1_BIRT[1], s1_BIRT[2])
+                s2_ = id_to_person(s2, individuals)
+
+                if s1_.ID == s2_.ID:
+                    continue
+
+                else:
+                    s2_BIRT = date_string_to_list(s2_.birthday)
+                    s2_BIRT = datetime.datetime(s2_BIRT[0], s2_BIRT[1], s2_BIRT[2])
+                    diff_days = abs((s1_BIRT - s2_BIRT).days)
+                    if diff_days > 2 and diff_days < 240:
+                        return False
+            except ValueError:
+                continue
+    return True

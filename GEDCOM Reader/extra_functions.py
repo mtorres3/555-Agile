@@ -5,7 +5,7 @@ from datetime import *
 import datetime
 
 # Dictionary that converts between a month and its numerical
-months = {
+MONTHS = {
         'JAN' : ["01", 31],
         'FEB' : ["02", 28],
         'MAR' : ["03", 31],
@@ -20,7 +20,7 @@ months = {
         'DEC' : ["12", 31]}
 
 # Tags broken down into indexes that correspond with their acceptable level number
-tags = [["INDI", "FAM", "HEAD", "TRLR", "NOTE"],["NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "MARR", "HUSB", "WIFE", "CHIL", "DIV"],["DATE"]]
+TAGS = (("INDI", "FAM", "HEAD", "TRLR", "NOTE"),("NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "MARR", "HUSB", "WIFE", "CHIL", "DIV"),("DATE"))
 
 # searches list L for person with ID
 def ids_to_names(ids, L):
@@ -29,6 +29,11 @@ def ids_to_names(ids, L):
         if person.ID in ids:
             names = names + [person.name]
     return names
+
+def id_to_person(id, L):
+    for person in L:
+        if id == person.ID:
+            return person
 
 # Converts from a date string to a list of integer values
 def date_string_to_list(s):
@@ -56,4 +61,4 @@ def validate_date(S):
 
 # day month year list to year-month-day
 def create_DATE(L):
-    return date_list_to_string([L[2], months[L[1]][0], L[0]])
+    return date_list_to_string([L[2], MONTHS[L[1]][0], L[0]])
