@@ -18,7 +18,7 @@ class TestGEDCOMReader(unittest.TestCase):
         self.assertTrue(families[0].married == "1992-03-22", msg="Error1")
         self.assertTrue(families[1].married == "INVALID DATE", msg="Error2")
         self.assertTrue(families[2].married == "1969-02-2", msg="Error3")
-        self.assertTrue(families[3].married == "INVALID MARRIAGE AGE", msg="Error4")
+        self.assertTrue(families[3].married == "INVALID DATE", msg="Error4")
         self.assertTrue(families[4].married == "1994-04-13", msg="Error5")
 
     #Checking Individuals existence
