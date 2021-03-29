@@ -85,6 +85,11 @@ class TestGEDCOMReader(unittest.TestCase):
     def test_fifteen_children_limit(self):
         self.assertEqual(families[1].children, ["I2", "I8", "I9"])
         self.assertEqual(families[4].children, ['I11', 'I14'])
+   
+    # Testing to see if deceased individuals are printed correctly
+    #def test_list_deceased(self):
+        #printDead(individuals)
+        #self.assertTrue(len(Deceased), 5)
         
 if __name__ == '__main__':
     unittest.main()                        

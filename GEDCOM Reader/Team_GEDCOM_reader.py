@@ -222,6 +222,8 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     print()
     print("----------------------------------------------------------------------------------------------------------------------------")
     print()
+    print("Deceased folk:")
+    printDead(individuals)
     print("Living Married Individuals:")
     print(list_marr0)
     

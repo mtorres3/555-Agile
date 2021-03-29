@@ -185,3 +185,11 @@ def living_married(family, individuals):
         list_marr.append(wife.ID)
         
     return list_marr          
+
+# US 29
+def printDead(individuals):
+    Deceased = []
+    for item in individuals:
+        if item.alive == False:
+            Deceased.append(item.name + " (" + item.ID + ")")
+    print(Deceased)
