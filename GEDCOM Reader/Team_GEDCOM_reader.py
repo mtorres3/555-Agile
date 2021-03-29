@@ -13,6 +13,8 @@ import sqlite3
 from extra_functions import *
 from functions import *
 
+#list_marr = []
+
 
 # Opens GEDCOM file as fam variable
 with open('Letizia_GEDTEST.ged.txt') as fam:
@@ -91,6 +93,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                 marr_date_array = [next_line[-3], MONTHS[next_line[-2]][0], next_line[-1]]
 
                 check_MARR_after_BIRT(families[-1], individuals, next_line, marr_date_string, marr_date_array)
+
             #US05: Marriage before death
             check_MARR_before_DEAT(families[-1], individuals, next_line, marr_date_string, marr_date_array)
 
@@ -128,6 +131,12 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
 
     for family in families:
+
+        #US30
+        list_marr0 = []
+        if ((family.married != "INVALID DATE") & ((family.divorced == "NA") or (family.divorced == "INVALID DATE"))):
+            list_marr0 += living_married(family, individuals)
+
 
         # US15 family has < 15 children
         if len(family.children) >= 15:
@@ -209,5 +218,13 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         c.execute(sql, info)
 
+    #Formatting between Individual/Family List and Living Married List
+    print()
+    print("----------------------------------------------------------------------------------------------------------------------------")
+    print()
+    print("Living Married Individuals:")
+    print(list_marr0)
+    
+    print()
     conn.commit()
     print("successful")

@@ -108,16 +108,12 @@ def check_MARR_before_DEAT(family, individuals, next_line, marr_date_string, mar
         if(individuals[-1].alive == False or individuals[-2].alive == False):
             if(family.married == "INVALID DATE"):
                 pass
-            elif(family.married == "INVALID MARRIAGE AGE"):
-                pass
             elif(marr_date_array[2] > deat_date[0] or (marr_date[2] == deat_date[0] and marr_date[1] > deat_date[1]) or (marr_date[1] == deat_date[1] and marr_date[0] > deat_date[2])):
                 family.married = "INVALID DATE"
                 family.divorced = "INVALID DATE"
             else:
                 family.married = marr_date_array[2] + "-" + marr_date_array[1] + "-" + marr_date_array[0]
         elif(family.married == "INVALID DATE"):
-            pass
-        elif(family.married == "INVALID MARRIAGE AGE"):
             pass
         else:
             family.married = next_line[-1] + "-" + MONTHS[next_line[-2]][0] + "-" + next_line[-3]
@@ -142,7 +138,7 @@ def check_MARR_after_BIRT(family, individuals, next_line, marr_date_string, marr
         if(marr_date_string > today):
             family.married = "INVALID DATE"
         elif(husband_age < 14 or wife_age < 14):
-            family.married = "INVALID MARRIAGE AGE"
+            family.married = "INVALID DATE"
         elif(temp_husband_birth > marr_date_string or temp_wife_birth > marr_date_string):
             family.married = "INVALID DATE"
             print("Family ID: "+family.ID+" | INVALID INDIVIDUAL: marriage before birth")
@@ -175,3 +171,17 @@ def sibling_spacing(family, individuals):
             except ValueError:
                 continue
     return True
+
+#US 30
+
+list_marr = []
+def living_married(family, individuals):
+    husb = id_to_person(family.husband_id, individuals)   
+    wife = id_to_person(family.wife_id, individuals)
+
+    if husb.death == "NA":
+        list_marr.append(husb.ID)
+    if wife.death == "NA":
+        list_marr.append(wife.ID)
+        
+    return list_marr          
