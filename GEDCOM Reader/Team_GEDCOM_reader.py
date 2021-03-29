@@ -122,15 +122,20 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         if (individual.age >= 150):
             individual.age = "INVALID AGE"
 
+    #Test code to make sure 15 child limit works
+    #families[2].children = ["I20","I21","I22","I23","I24","I25","I26","I27",
+    #                        "I28","I29","I30","I31","I32","I33","I34","I35"]
+
+
     for family in families:
 
         # US15 family has < 15 children
         if len(family.children) >= 15:
             print("Family {} has too many children. ({})".format(family.ID, len(family.children)))
-
+        
         if not sibling_spacing(family, individuals):
             print("Family {} has improper sibling spacing.".format(family.ID))
-
+        
     #Formatting between Validity Checks and Individual/Family List
     print()
     print("----------------------------------------------------------------------------------------------------------------------------")

@@ -72,6 +72,19 @@ class TestGEDCOMReader(unittest.TestCase):
         for ID in range(len(unique_Fam_IDs)):
             self.assertEqual(unique_Fam_IDs.count(unique_Fam_IDs[ID]), 1)
 
+    # Testing to ensure that each role has the proper gender
+    def test_gender_for_role(self):
+        self.assertEqual(individuals[1].gender, "M")
+        self.assertEqual(individuals[2].gender, "F")
+
+    # Testing to ensure that the input line is numbered correctly
+    def test_input_line_number(self):
+        self.assertEqual(line_count, len(families)+len(individuals))
+
+    # Testing to ensure there is a 15 child limit
+    def test_fifteen_children_limit(self):
+        self.assertEqual(families[1].children, ["I2", "I8", "I9"])
+        self.assertEqual(families[4].children, ['I11', 'I14'])
         
 if __name__ == '__main__':
     unittest.main()                        
