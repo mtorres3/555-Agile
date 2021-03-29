@@ -1,3 +1,4 @@
+
 class Person:
     def __init__(self, ID = "", Name = "", Gender = '', Birthday = "NA", Age = 0, Alive = True, Death = "NA", Child = None, Spouse = None):
         self.ID = ID # String

@@ -1,13 +1,15 @@
+
 from datetime import *
 from extra_functions import *
 import datetime
+from extra_functions import *
 today = str(datetime.date.today())
 
 def create_BIRT(birt_date):
     if(birt_date > today):
         return "INVALID DATE"
     else:
-       return birt_date
+        return birt_date
 
 def create_DEAT(deat_date, next_line):
         if("DATE" not in next_line):
@@ -15,7 +17,7 @@ def create_DEAT(deat_date, next_line):
         elif(deat_date > today):
             return "INVALID DATE"
         else:
-           return deat_date
+            return deat_date
 
 def create_CHIL(families, individuals, line):
     families[-1].children.append(line[-1][1:-1])
@@ -51,9 +53,32 @@ def validate_DEAT(individual):
         print("Individual ID: "+individual.ID+" | INVALID INDIVIDUAL: death before birth")
     return individual
 
+def husband(families, individuals, newLine, next_line):
+    families[-1].husband_id = newLine[-1][1:-1]
+    families[-1].wife_id = next_line[-1][1:-1]
+    for person in individuals:
+        if person.ID == families[-1].husband_id:
+            families[-1].husband_name = person.name
+            #US21: Correct gender for role
+            if(person.gender == "F"):
+                person.gender = "INVALID GENDER"
+            person.spouse.append(families[-1].wife_id)
+    return [individuals, families]
+
+def wife(families, individuals, newLine):
+    families[-1].wife_id = newLine[-1][1:-1]
+    for person in individuals:
+        if person.ID == families[-1].wife_id:
+            families[-1].wife_name = person.name
+            #US21: Correct gender for role
+            if(person.gender == "M"):
+                person.gender = "INVALID GENDER"
+            person.spouse.append(families[-1].husband_id)
+    return [individuals, families]
+
 # if 'DIV'
 def check_DIV(family, individuals, next_line, marr_date, div_date):
-    
+
     for person in individuals:
         if person.ID == family.husband_id:
             temp_husband_death = person.death
@@ -72,7 +97,7 @@ def check_DIV(family, individuals, next_line, marr_date, div_date):
             family.divorced = "INVALID DATE"
     except KeyError:
         family.divorced = next_line[-1]
-    
+
 #MARR before DIV
 def check_MARR_before_DEAT(family, individuals, next_line, marr_date_string, marr_date_array):
     if(individuals[-1].alive == False):
@@ -124,4 +149,4 @@ def check_MARR_after_BIRT(family, individuals, next_line, marr_date_string, marr
         else:
             family.married = marr_date_string
     except KeyError:
-        family.married = next_line[-1]   
+        family.married = next_line[-1]

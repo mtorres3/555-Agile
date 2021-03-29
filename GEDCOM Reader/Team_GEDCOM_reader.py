@@ -43,7 +43,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         elif("SEX" in newLine):
             individuals[-1].gender = newLine[-1]
-        
+
         elif("BIRT" in newLine):
             next_line = line_point + 1
             next_line = text[next_line].split()
@@ -64,38 +64,22 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         elif("HUSB" in newLine):
             next_line = text[line_point+1].split()
-            families[-1].husband_id = newLine[-1][1:-1]
-            families[-1].wife_id = next_line[-1][1:-1]
-            for person in individuals:
-                if person.ID == families[-1].husband_id:
-                    families[-1].husband_name = person.name
-                    #US21: Correct gender for role
-                    if(person.gender == "F"):
-                        person.gender = "INVALID GENDER"
-                    person.spouse.append(families[-1].wife_id)
+            husband(families, individuals, newLine, next_line)
 
         elif("WIFE" in newLine):
-            families[-1].wife_id = newLine[-1][1:-1]
-            for person in individuals:
-                if person.ID == families[-1].wife_id:
-                    families[-1].wife_name = person.name
-                    #US21: Correct gender for role
-                    if(person.gender == "M"):
-                        person.gender = "INVALID GENDER"
-                    person.spouse.append(families[-1].husband_id)
+            wife(families, individuals, newLine)
 
         elif("CHIL" in newLine):
             changes = create_CHIL(families, individuals, newLine)
             individuals = changes[0]
             families = changes[1]
 
-
         elif("DIV" in newLine):
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
                 marr_date = text[line_point-1].split()
                 div_date = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
-                
+
                 check_DIV(families[-1], individuals, next_line, marr_date, div_date)
             else:
                 families[-1].divorced = "Date not found"
@@ -105,11 +89,12 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                 next_line = text[line_point+1].split()
                 marr_date_string = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
                 marr_date_array = [next_line[-3], months[next_line[-2]][0], next_line[-1]]
-        
+
                 check_MARR_after_BIRT(families[-1], individuals, next_line, marr_date_string, marr_date_array)
             #US05: Marriage before death
             check_MARR_before_DEAT(families[-1], individuals, next_line, marr_date_string, marr_date_array)
-    
+
+
         line_point += 1
 
     # Updates everyones age
@@ -141,10 +126,10 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     print()
     print("----------------------------------------------------------------------------------------------------------------------------")
     print()
-    
+
     #US40: Include input line numbers
     line_count = 0
-    
+
     for person in individuals:
         info = vars(person)
         print(line_count,', '.join("%s: %s" % value for value in info.items()))
