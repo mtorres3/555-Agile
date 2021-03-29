@@ -120,7 +120,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             individual.age = death.year - birth.year - ((death.month, death.day) < (birth.month, birth.day))
 
         else:
-            individual.age = 0
+            individual.age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
 
         if (individual.age >= 150):
             individual.age = "INVALID AGE"
@@ -131,6 +131,9 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
 
     for family in families:
+
+        #US12
+        old_parents(family, individuals)
 
         #US30
         list_marr0 = []
@@ -218,15 +221,20 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         c.execute(sql, info)
 
-    #Formatting between Individual/Family List and Living Married List
+    #Formatting between Individual/Family List and User Story Lists
     print()
     print("----------------------------------------------------------------------------------------------------------------------------")
     print()
-    print("Deceased folk:")
+
+    #US29
+    print("Deceased:")
     printDead(individuals)
+    print()
+    
+    #US30
     print("Living Married Individuals:")
     print(list_marr0)
-    
     print()
+
     conn.commit()
     print("successful")

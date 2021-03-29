@@ -147,7 +147,19 @@ def check_MARR_after_BIRT(family, individuals, next_line, marr_date_string, marr
     except KeyError:
         family.married = next_line[-1]
 
-# US 13
+#US12
+def old_parents(family, individuals):
+    dad = id_to_person(family.husband_id, individuals)
+    mom = id_to_person(family.wife_id, individuals)
+    count = 0
+    for child in family.children:
+        kid = id_to_person(family.children[count], individuals)
+        if ((mom.age - kid.age) >= 60) or ((dad.age - kid.age) >= 80):
+            print ("Individual ID: "+kid.ID+" | INVALID INDIVIDUAL: born after mother >= 60 or father >= 80")
+            kid.age = "INVALID AGE"
+        count += 1
+
+#US13
 def sibling_spacing(family, individuals):
     if len(family.children) in [0,1]:
         return True
@@ -172,7 +184,7 @@ def sibling_spacing(family, individuals):
                 continue
     return True
 
-#US 30
+#US30
 
 list_marr = []
 def living_married(family, individuals):
@@ -186,7 +198,7 @@ def living_married(family, individuals):
         
     return list_marr          
 
-# US 29
+#US29
 def printDead(individuals):
     Deceased = []
     for item in individuals:
