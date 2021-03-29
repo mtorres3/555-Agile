@@ -47,14 +47,14 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         elif("BIRT" in newLine):
             next_line = line_point + 1
             next_line = text[next_line].split()
-            birt_date = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
+            birt_date = next_line[-1] + "-" + MONTHS[next_line[-2]][0] + "-" + next_line[-3]
             individuals[-1].birthday = create_BIRT(birt_date)
 
         elif("DEAT" in newLine):
             individuals[-1].alive = False
             next_line = line_point + 1
             next_line = text[next_line].split()
-            deat_date = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
+            deat_date = next_line[-1] + "-" + MONTHS[next_line[-2]][0] + "-" + next_line[-3]
             individuals[-1].death = create_DEAT(deat_date, next_line)
             individuals[-1] = validate_DEAT(individuals[-1])
 
@@ -78,7 +78,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
                 marr_date = text[line_point-1].split()
-                div_date = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
+                div_date = next_line[-1] + "-" + MONTHS[next_line[-2]][0] + "-" + next_line[-3]
 
                 check_DIV(families[-1], individuals, next_line, marr_date, div_date)
             else:
@@ -87,8 +87,8 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         elif("MARR" in newLine):
             if "DATE" in text[line_point+1].split():
                 next_line = text[line_point+1].split()
-                marr_date_string = next_line[-1] + "-" + months[next_line[-2]][0] + "-" + next_line[-3]
-                marr_date_array = [next_line[-3], months[next_line[-2]][0], next_line[-1]]
+                marr_date_string = next_line[-1] + "-" + MONTHS[next_line[-2]][0] + "-" + next_line[-3]
+                marr_date_array = [next_line[-3], MONTHS[next_line[-2]][0], next_line[-1]]
 
                 check_MARR_after_BIRT(families[-1], individuals, next_line, marr_date_string, marr_date_array)
             #US05: Marriage before death
@@ -121,6 +121,15 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         if (individual.age >= 150):
             individual.age = "INVALID AGE"
+
+    for family in families:
+
+        # US15 family has < 15 children
+        if len(family.children) >= 15:
+            print("Family {} has too many children. ({})".format(family.ID, len(family.children)))
+
+        if not sibling_spacing(family, individuals):
+            print("Family {} has improper sibling spacing.".format(family.ID))
 
     #Formatting between Validity Checks and Individual/Family List
     print()
