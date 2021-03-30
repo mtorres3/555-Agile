@@ -13,8 +13,6 @@ import sqlite3
 from extra_functions import *
 from functions import *
 
-#list_marr = []
-
 
 # Opens GEDCOM file as fam variable
 with open('Letizia_GEDTEST.ged.txt') as fam:
@@ -137,10 +135,10 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         old_parents(family, individuals)
 
         #US30
-        list_marr0 = []
-        if ((family.married != "INVALID DATE") & ((family.divorced == "NA") or (family.divorced == "INVALID DATE"))):
-            list_marr0 += living_married(family, individuals)
+        list_marr = living_married(family, individuals)
 
+        #US34
+        marr_2age = marriage_double_age(family, individuals)
 
         # US15 family has < 15 children
         if len(family.children) >= 15:
@@ -229,12 +227,17 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
     #US29
     print("Deceased:")
-    printDead(individuals)
+    print(printDead(individuals))
     print()
     
     #US30
     print("Living Married Individuals:")
-    print(list_marr0)
+    print(list_marr)
+    print()
+
+    #US34
+    print("Couples Twice Age as Counterpart at Marriage:")
+    print(marr_2age)
     print()
 
     conn.commit()

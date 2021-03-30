@@ -200,20 +200,38 @@ def printDead(individuals):
     for item in individuals:
         if item.alive == False:
             Deceased.append(item.name + " (" + item.ID + ")")
-    print(Deceased)
+    return Deceased
 
 #US30
-list_marr = []
+list_marr0 = []
 def living_married(family, individuals):
     husb = id_to_person(family.husband_id, individuals)   
     wife = id_to_person(family.wife_id, individuals)
 
-    if husb.death == "NA":
-        list_marr.append(husb.ID)
-    if wife.death == "NA":
-        list_marr.append(wife.ID)
+    if ((family.married != "INVALID DATE") & ((family.divorced == "NA") or (family.divorced == "INVALID DATE"))):
+        if husb.death == "NA":
+            list_marr0.append(husb.name + " (" + husb.ID + ")")
+        if wife.death == "NA":
+            list_marr0.append(wife.name + " (" + wife.ID + ")")
         
-    return list_marr          
+    return list_marr0          
 
 #US34
-#def marriage_double_age(family, individuals):
+marr_2age0 = []
+def marriage_double_age(family, individuals):
+
+    husb = id_to_person(family.husband_id, individuals)   
+    wife = id_to_person(family.wife_id, individuals)
+
+    if ((family.married != "INVALID DATE") & (husb.birthday != "INVALID DATE") & (wife.birthday != "INVALID DATE")):
+        
+        family_int = datetime.datetime.strptime(family.married, '%Y-%m-%d')
+        husb_int = datetime.datetime.strptime(husb.birthday, '%Y-%m-%d')
+        wife_int = datetime.datetime.strptime(wife.birthday, '%Y-%m-%d')
+        husb_ref = family_int - husb_int
+        wife_ref = family_int - wife_int
+
+        if (husb_ref > (2*wife_ref)) or (wife_ref > (2*husb_ref)):
+            marr_2age0.append(husb.name + " (" + husb.ID + ") - " + wife.name + " (" + wife.ID + ")")
+
+    return marr_2age0
