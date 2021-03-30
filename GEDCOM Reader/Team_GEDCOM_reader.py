@@ -32,7 +32,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         if ("DATE" in newLine):
             date_to_check = create_DATE(newLine[-3:])
             if not validate_date(date_to_check):
-                print("Individual ID: {} | Invalid date input: {}".format(individuals[-1].ID, date_to_check))
+                print("ID: {} | Invalid date input: {}".format(individuals[-1].ID, date_to_check))
                 raise IndexError
 
         if ("INDI" in newLine):
@@ -50,7 +50,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             next_line = line_point + 1
             next_line = text[next_line].split()
             birt_date = next_line[-1] + "-" + MONTHS[next_line[-2]][0] + "-" + next_line[-3]
-            individuals[-1].birthday = create_BIRT(birt_date)
+            individuals[-1].birthday = create_BIRT(birt_date, individuals[-1])
 
         elif("DEAT" in newLine):
             individuals[-1].alive = False
@@ -123,6 +123,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             individual.age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
 
         if (individual.age >= 150):
+            print("ID: "+individual.id+" | INVALID INDIVIDUAL: age >= 150")
             individual.age = "INVALID AGE"
 
     #Test code to make sure 15 child limit works
@@ -143,10 +144,10 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         # US15 family has < 15 children
         if len(family.children) >= 15:
-            print("Family {} has too many children. ({})".format(family.ID, len(family.children)))
+            print("ID: {} | INVALID FAMILY: has too many children. ({})".format(family.ID, len(family.children)))
         
         if not sibling_spacing(family, individuals):
-            print("Family {} has improper sibling spacing.".format(family.ID))
+            print("ID: {} | INVALID FAMILY: has improper sibling spacing.".format(family.ID))
         
     #Formatting between Validity Checks and Individual/Family List
     print()

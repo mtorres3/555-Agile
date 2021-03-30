@@ -5,8 +5,9 @@ import datetime
 from extra_functions import *
 today = str(datetime.date.today())
 
-def create_BIRT(birt_date):
+def create_BIRT(birt_date, individual):
     if(birt_date > today):
+        print("ID: "+individual.ID+" | INVALID INDIVIDUAL: birth after today")
         return "INVALID DATE"
     else:
         return birt_date
@@ -15,6 +16,7 @@ def create_DEAT(deat_date, next_line):
         if("DATE" not in next_line):
             return "Not Found"
         elif(deat_date > today):
+            print("ID: "+individual.ID+" | INVALID INDIVIDUAL: death after today")
             return "INVALID DATE"
         else:
             return deat_date
@@ -31,8 +33,8 @@ def create_CHIL(families, individuals, line):
 # US02
 def validate_DEAT(individual):
 
-    #birt_check = False
-    #deat_check = False
+    birt_check = False
+    deat_check = False
 
     try:
         birt_obj = datetime.datetime.strptime(individual.birthday, '%Y-%m-%d')
@@ -49,8 +51,8 @@ def validate_DEAT(individual):
     if (birt_check == True and deat_check == True and birt_obj.date() < deat_obj.date()):
         pass
     else:
+        print("ID: "+individual.ID+" | INVALID INDIVIDUAL: death before birth")
         individual.death = "INVALID DATE"
-        print("Individual ID: "+individual.ID+" | INVALID INDIVIDUAL: death before birth")
     return individual
 
 def husband(families, individuals, newLine, next_line):
@@ -61,6 +63,7 @@ def husband(families, individuals, newLine, next_line):
             families[-1].husband_name = person.name
             #US21: Correct gender for role
             if(person.gender == "F"):
+                print("ID: "+person.ID+" | INVALID INDIVIDUAL: gender wrong for role")
                 person.gender = "INVALID GENDER"
             person.spouse.append(families[-1].wife_id)
     return [individuals, families]
@@ -72,6 +75,7 @@ def wife(families, individuals, newLine):
             families[-1].wife_name = person.name
             #US21: Correct gender for role
             if(person.gender == "M"):
+                print("ID: "+person.ID+" | INVALID INDIVIDUAL: gender wrong for role")
                 person.gender = "INVALID GENDER"
             person.spouse.append(families[-1].husband_id)
     return [individuals, families]
@@ -86,14 +90,17 @@ def check_DIV(family, individuals, next_line, marr_date, div_date):
             temp_wife_death = person.death
     try:
         if(div_date > today):
+            print("ID: "+family.ID+" | INVALID FAMILY: divorce after today")
             family.divorced = "INVALID DATE"
         elif(div_date > temp_wife_death or div_date > temp_husband_death):
+            print("ID: "+family.ID+" | INVALID FAMILY: divorce after death of spouse")
             family.divorced = "INVALID DATE"
 
         #US04: Marriage before divorce
         elif(next_line[-3:] == marr_date[-3:] or next_line[-1] > marr_date[-1] or (next_line[-1] == marr_date[-1] and MONTHS[next_line[-2]][0] > MONTHS[marr_date[-2]][0]) or (MONTHS[next_line[-2]][0] == MONTHS[marr_date[-2]][0] and next_line[-3] > marr_date[-3])):
             family.divorced = next_line[-1] + "-" + MONTHS[next_line[-2]][0] + "-" + next_line[-3]
         else:
+            print("ID: "+family.ID+" | INVALID FAMILY: divorce before marriage")
             family.divorced = "INVALID DATE"
     except KeyError:
         family.divorced = next_line[-1]
@@ -109,6 +116,7 @@ def check_MARR_before_DEAT(family, individuals, next_line, marr_date_string, mar
             if(family.married == "INVALID DATE"):
                 pass
             elif(marr_date_array[2] > deat_date[0] or (marr_date[2] == deat_date[0] and marr_date[1] > deat_date[1]) or (marr_date[1] == deat_date[1] and marr_date[0] > deat_date[2])):
+                print("ID: "+family.ID+" | INVALID FAMILY: marriage after death of spouse")
                 family.married = "INVALID DATE"
                 family.divorced = "INVALID DATE"
             else:
@@ -136,12 +144,14 @@ def check_MARR_after_BIRT(family, individuals, next_line, marr_date_string, marr
             wife_age = marriage_date.year - temp_wife_birth_date.year - ((marriage_date.month, marriage_date.day) < (temp_wife_birth_date.month, temp_wife_birth_date.day))
     try:
         if(marr_date_string > today):
+            print("ID: "+family.ID+" | INVALID FAMILY: marriage after today")
             family.married = "INVALID DATE"
         elif(husband_age < 14 or wife_age < 14):
+            print("ID: "+family.ID+" | INVALID FAMILY: spouse too young at marriage")
             family.married = "INVALID DATE"
         elif(temp_husband_birth > marr_date_string or temp_wife_birth > marr_date_string):
+            print("ID: "+family.ID+" | INVALID FAMILY: marriage before birth of spouse")
             family.married = "INVALID DATE"
-            print("Family ID: "+family.ID+" | INVALID INDIVIDUAL: marriage before birth")
         else:
             family.married = marr_date_string
     except KeyError:
@@ -155,7 +165,7 @@ def old_parents(family, individuals):
     for child in family.children:
         kid = id_to_person(family.children[count], individuals)
         if ((mom.age - kid.age) >= 60) or ((dad.age - kid.age) >= 80):
-            print ("Individual ID: "+kid.ID+" | INVALID INDIVIDUAL: born after mother >= 60 or father >= 80")
+            print ("ID: "+kid.ID+" | INVALID INDIVIDUAL: born after mother >= 60 or father >= 80")
             kid.age = "INVALID AGE"
         count += 1
 
@@ -184,8 +194,15 @@ def sibling_spacing(family, individuals):
                 continue
     return True
 
-#US30
+#US29
+def printDead(individuals):
+    Deceased = []
+    for item in individuals:
+        if item.alive == False:
+            Deceased.append(item.name + " (" + item.ID + ")")
+    print(Deceased)
 
+#US30
 list_marr = []
 def living_married(family, individuals):
     husb = id_to_person(family.husband_id, individuals)   
@@ -198,10 +215,5 @@ def living_married(family, individuals):
         
     return list_marr          
 
-#US29
-def printDead(individuals):
-    Deceased = []
-    for item in individuals:
-        if item.alive == False:
-            Deceased.append(item.name + " (" + item.ID + ")")
-    print(Deceased)
+#US34
+#def marriage_double_age(family, individuals):
