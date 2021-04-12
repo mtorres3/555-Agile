@@ -216,6 +216,25 @@ def living_married(family, individuals):
         
     return list_marr0          
 
+#US32
+name_array_list = []
+def multiple_births(family, individuals):
+    same_bday = []       
+    for x in family.children:
+        for y in family.children:
+            if id_to_person(x, individuals).birthday == id_to_person(y, individuals).birthday and id_to_person(x, individuals).name != id_to_person(y, individuals).name:
+                same_bday += id_to_person(x, individuals).name + " (" + id_to_person(x, individuals).ID + ")"
+                same_bday += '|'
+                same_bday += id_to_person(y, individuals).name + " (" + id_to_person(y, individuals).ID + ")"
+    names_list = ''.join(same_bday)
+    names_list = names_list[:len(same_bday)//2]
+    if len(names_list) > 0:
+        name_array = names_list.split('|')
+        name_array_list.append(name_array)
+        print(name_array_list)
+    multi = name_array_list
+    return multi
+
 #US34
 marr_2age0 = []
 def marriage_double_age(family, individuals):
