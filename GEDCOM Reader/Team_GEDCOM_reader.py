@@ -12,6 +12,7 @@ import datetime
 import sqlite3
 from extra_functions import *
 from functions import *
+today = date.today()
 
 
 # Opens GEDCOM file as fam variable
@@ -99,9 +100,18 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         line_point += 1
 
     # Updates everyones age
+    names_birthdays = []
     for individual in individuals:
-
         today = date.today()
+
+        # US23 Unique Names and Birthdays in GEDCOM file
+        if [individual.name, individual.birthday] in names_birthdays:
+            print("ID: {} | INVALID NAME AND BIRTHDATE: {} is a repeated identity.".format(individual.ID, str([individual.name, individual.birthday])))
+            #individuals.remove(individual)
+            continue
+        else:
+            names_birthdays.append([individual.name, individual.birthday])
+        
         if (individual.birthday != "INVALID DATE"):
             birth = individual.birthday.split('-')
             birth = date(int(birth[0]), int(birth[1]), int(birth[2]))
@@ -133,6 +143,16 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         #US12
         old_parents(family, individuals)
+
+        # US25 Unique First names in families
+        names = []
+        for child in family.children:
+            child_Obj = id_to_person(child, individuals)
+            if [child_Obj.name, child_Obj.birthday] in names:
+                print("ID: {} | INVALID NAME: {} is a repeated child in family {}.".format(child_Obj.ID, child_Obj.name, family.ID))
+                continue
+            else:
+                names.append([child_Obj.name, child_Obj.birthday])
 
         #US30
         list_marr = living_married(family, individuals)
