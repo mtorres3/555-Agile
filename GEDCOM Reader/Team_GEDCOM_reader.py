@@ -139,7 +139,25 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         #US34
         marr_2age = marriage_double_age(family, individuals)
-
+        '''
+        #US28
+        child_list = []
+        for x in family.children:
+            child_list += x
+            print(child_list)
+        print(x, id_to_person(x, individuals).age)
+        '''
+        #US16
+        husband_last_name = family.husband_name.split(' ')[1]
+        for x in family.children:
+            if id_to_person(x, individuals).gender == 'M':
+                if id_to_person(x, individuals).name.split(' ')[1] == husband_last_name:
+                    continue
+                else:
+                    id_to_person(x, individuals).name = "INVALID LAST NAME"
+                    print(id_to_person(x, individuals).ID, id_to_person(x, individuals).name)
+                    print('ID: {} | INVALID FAMILY: male last names are not the same')
+        
         # US15 family has < 15 children
         if len(family.children) >= 15:
             print("ID: {} | INVALID FAMILY: has too many children. ({})".format(family.ID, len(family.children)))

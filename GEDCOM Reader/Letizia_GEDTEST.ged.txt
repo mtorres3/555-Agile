@@ -11,7 +11,7 @@
 1 SUBN
 1 CHAR UTF-8
 0 @I1@ INDI
-1 NAME John /Smith/
+1 NAME John /Smithm/
 2 GIVN John
 2 SURN Smith
 2 _MARNM Smith

@@ -89,6 +89,10 @@ class TestGEDCOMReader(unittest.TestCase):
     # Testing to ensure there is an parent vs. child age difference limit
     def test_old_parents(self):
         self.assertEqual(individuals[20].age, "INVALID AGE")
+
+    #Testing to make sure that all of the last names are the same
+    def test_same_last_name(self):
+        self.assertEqual(individuals[0].name, 'INVALID LAST NAME')
    
     # Testing to see if deceased individuals are printed correctly
     #def test_list_deceased(self):
