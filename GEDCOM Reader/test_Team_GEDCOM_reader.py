@@ -15,7 +15,7 @@ class TestGEDCOMReader(unittest.TestCase):
 
     #Checking marriage before death date
     def test_marr_before_deat(self):
-        self.assertTrue(families[0].married == "1992-03-22", msg="Error1")
+        self.assertTrue(families[0].married == "INVALID DATE", msg="Error1")
         self.assertTrue(families[1].married == "INVALID DATE", msg="Error2")
         self.assertTrue(families[2].married == "1969-02-2", msg="Error3")
         self.assertTrue(families[3].married == "INVALID DATE", msg="Error4")
@@ -88,7 +88,7 @@ class TestGEDCOMReader(unittest.TestCase):
 
     # Testing to ensure there is an parent vs. child age difference limit
     def test_old_parents(self):
-        self.assertEqual(individuals[20].age, "INVALID AGE")
+        self.assertEqual(individuals[2].age, "INVALID AGE")
 
     #Testing to make sure that all of the last names are the same
     def test_same_last_name(self):
@@ -96,7 +96,7 @@ class TestGEDCOMReader(unittest.TestCase):
 
     #Testing to see if there are multiple births
     def test_multiple_births(self):
-        self.assertEquals(multi_birt, [['Charlotte Devaul (I7)', 'Matt Devaul (I21)']])
+        self.assertEqual(multi_birt, [['Charlotte Devaul (I7)', 'Matt Devaul (I21)']])
     
     # Testing to see if deceased individuals are printed correctly
     #def test_list_deceased(self):
