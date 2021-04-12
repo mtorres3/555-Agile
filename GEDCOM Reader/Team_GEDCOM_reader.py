@@ -171,7 +171,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                     continue
                 else:
                     id_to_person(x, individuals).name = "INVALID LAST NAME"
-                    print('ID: {} | INVALID FAMILY: male last names are not the same')
+                    print('ID: '+ family.ID +' | INVALID FAMILY: male last names are not the same')
         
         # US15 family has < 15 children
         if len(family.children) >= 15:
