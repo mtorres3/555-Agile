@@ -21,14 +21,56 @@ def create_DEAT(deat_date, next_line):
         else:
             return deat_date
 
+# US08, US09
 def create_CHIL(families, individuals, line):
-    families[-1].children.append(line[-1][1:-1])
-    for person in individuals:
-        if person.ID == families[-1].husband_id:
-            person.child.append(line[-1][1:-1])
+    
+    child = line[-1][1:-1]
+    
+    # Get husband death date, wife death date, and child birthday
+    for person in individuals: 
+            
+        # 4 Checks for invalid child birth date
+        
+        # Check for child birthday before parents marriage
+        if person.ID == child:
+            childbirthday = person.birthday
+            if (childbirthday < families[-1].married):
+                print("ID: "+child+" | Invalid child birth date, before marriage")
+                print(child, childbirthday)
+                print(families[-1].ID, families[-1].married)
+        # Check for child birthday before parents marriage
+        if families[-1].divorced != "NA":
+            div = datetime.datetime.strptime(families[-1].divorced, '%Y-%m-%d')
+            divplusnine = div + timedelta(weeks=39)
+            if childbirthday != "INVALID DATE":
+                childbirthdate = datetime.datetime.strptime(childbirthday, '%Y-%m-%d')
+                if (childbirthdate > divplusnine):
+                    print("ID: "+child+" | Invalid child birth date, after divorce plus 9 months")
+        # Check for child birthday before parents marriage
         if person.ID == families[-1].wife_id:
-            person.child.append(line[-1][1:-1])
-    return [individuals, families]
+            temp_wife_death = person.death
+            if person.ID == child:
+                childbirthday = person.birthday
+                if (childbirthday > temp_wife_death):
+                    print("ID: "+child+" | Invalid child birth date, after mother's death")
+        # Check for child birthday before parents marriage
+        if person.ID == families[-1].husband_id:
+            temp_husband_death = person.death
+            if temp_husband_death != "NA":
+                husbdeath = datetime.datetime.strptime(temp_husband_death, '%Y-%m-%d')
+                husbdeathplusnine = husbdeath + timedelta(weeks=39)
+                if childbirthday != "INVALID DATE":
+                        childbirthdate = datetime.datetime.strptime(childbirthday, '%Y-%m-%d')
+                        if (childbirthdate > husbdeathplusnine):
+                            print("ID: "+child+" | Invalid child birth date, after father's death plus 9 months")
+        # Append child to family, husband, and wife lists
+        families[-1].children.append(child)
+        for person in individuals:
+            if person.ID == families[-1].husband_id:
+                person.child.append(child)
+            if person.ID == families[-1].wife_id:
+                person.child.append(child)
+        return [individuals, families]
 
 # US02
 def validate_DEAT(individual):
