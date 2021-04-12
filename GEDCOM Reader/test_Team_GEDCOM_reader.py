@@ -93,7 +93,11 @@ class TestGEDCOMReader(unittest.TestCase):
     #Testing to make sure that all of the last names are the same
     def test_same_last_name(self):
         self.assertEqual(individuals[0].name, 'INVALID LAST NAME')
-   
+
+    #Testing to see if there are multiple births
+    def test_multiple_births(self):
+        self.assertEquals(multi_birt, [['Charlotte Devaul (I7)', 'Matt Devaul (I21)']])
+    
     # Testing to see if deceased individuals are printed correctly
     #def test_list_deceased(self):
         #printDead(individuals)

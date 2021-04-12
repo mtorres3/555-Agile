@@ -234,7 +234,6 @@ def multiple_births(family, individuals):
     if len(names_list) > 0:
         name_array = names_list.split('|')
         name_array_list.append(name_array)
-        print(name_array_list)
     multi = name_array_list
     return multi
 
