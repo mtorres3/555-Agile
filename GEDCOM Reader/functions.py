@@ -162,12 +162,15 @@ def old_parents(family, individuals):
     dad = id_to_person(family.husband_id, individuals)
     mom = id_to_person(family.wife_id, individuals)
     count = 0
-    for child in family.children:
-        kid = id_to_person(family.children[count], individuals)
-        if ((mom.age - kid.age) >= 60) or ((dad.age - kid.age) >= 80):
-            print ("ID: "+kid.ID+" | INVALID INDIVIDUAL: born after mother >= 60 or father >= 80")
-            kid.age = "INVALID AGE"
-        count += 1
+    try:
+        for child in family.children:
+            kid = id_to_person(family.children[count], individuals)
+            if ((mom.age - kid.age) >= 60) or ((dad.age - kid.age) >= 80):
+                print ("ID: "+kid.ID+" | INVALID INDIVIDUAL: born after mother >= 60 or father >= 80")
+                kid.age = "INVALID AGE"
+    except KeyError or TypeError:
+        pass
+    count += 1
 
 #US13
 def sibling_spacing(family, individuals):
