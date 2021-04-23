@@ -12,7 +12,6 @@ import datetime
 import sqlite3
 from extra_functions import *
 from functions import *
-today = date.today()
 
 
 # Opens GEDCOM file as fam variable
@@ -100,21 +99,14 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         line_point += 1
 
     # Updates everyones age
-    names_birthdays = []
     for individual in individuals:
-        today = date.today()
 
-        # US23 Unique Names and Birthdays in GEDCOM file
-        if [individual.name, individual.birthday] in names_birthdays:
-            print("ID: {} | INVALID NAME AND BIRTHDATE: {} is a repeated identity.".format(individual.ID, str([individual.name, individual.birthday])))
-            #individuals.remove(individual)
-            continue
-        else:
-            names_birthdays.append([individual.name, individual.birthday])
-        
+        today = date.today()
         if (individual.birthday != "INVALID DATE"):
             birth = individual.birthday.split('-')
             birth = date(int(birth[0]), int(birth[1]), int(birth[2]))
+            if (today - birth).days <= 30:
+                print("ID {}: {} born {} days ago.".format(individual.ID, individual.name, (today - birth).days))
 
         if individual.birthday == "NA":
             individual.age = 0
@@ -144,25 +136,19 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         #US12
         old_parents(family, individuals)
 
-        # US25 Unique First names in families
-        names = []
-        for child in family.children:
-            child_Obj = id_to_person(child, individuals)
-            if [child_Obj.name, child_Obj.birthday] in names:
-                print("ID: {} | INVALID NAME: {} is a repeated child in family {}.".format(child_Obj.ID, child_Obj.name, family.ID))
-                continue
-            else:
-                names.append([child_Obj.name, child_Obj.birthday])
-
         #US30
         list_marr = living_married(family, individuals)
 
         #US34
         marr_2age = marriage_double_age(family, individuals)
-
-        #US32
-        multi_birt = multiple_births(family, individuals)
-    
+        '''
+        #US28
+        child_list = []
+        for x in family.children:
+            child_list += x
+            print(child_list)
+        print(x, id_to_person(x, individuals).age)
+        '''
         #US16
         husband_last_name = family.husband_name.split(' ')[1]
         for x in family.children:
@@ -171,7 +157,8 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                     continue
                 else:
                     id_to_person(x, individuals).name = "INVALID LAST NAME"
-                    print('ID: '+ family.ID +' | INVALID FAMILY: male last names are not the same')
+                    print(id_to_person(x, individuals).ID, id_to_person(x, individuals).name)
+                    print('ID: {} | INVALID FAMILY: male last names are not the same')
         
         # US15 family has < 15 children
         if len(family.children) >= 15:
@@ -271,11 +258,6 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     #US34
     print("Couples Twice Age as Counterpart at Marriage:")
     print(marr_2age)
-    print()
-
-    #US32
-    print("Multiple Births:")
-    print(multi_birt)
     print()
 
     conn.commit()
