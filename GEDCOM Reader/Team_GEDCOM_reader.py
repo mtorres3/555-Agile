@@ -133,6 +133,14 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
     for family in families:
 
+        # US28: Order Siblings by age
+        if family.children != None:
+            L = sorted(family.children, key=lambda p: id_to_person(p, individuals).age, reverse=True)
+            families[families.index(family)].children = L
+
+        else:
+            pass
+
         #US12
         old_parents(family, individuals)
 
