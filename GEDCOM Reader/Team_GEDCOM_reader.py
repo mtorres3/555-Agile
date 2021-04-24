@@ -130,7 +130,9 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
     #families[2].children = ["I20","I21","I22","I23","I24","I25","I26","I27",
     #                        "I28","I29","I30","I31","I32","I33","I34","I35"]
 
-
+    #US24 Unique Families and Marriages
+    family_by_spouses = []
+    
     for family in families:
 
         # US28: Order Siblings by age
@@ -140,6 +142,14 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         else:
             pass
+
+        #US24 Unique Families and Marriages
+        hw_tuple = (family.husband_id, family.wife_id, family.married)
+        if hw_tuple in family_by_spouses:
+            print ("ID: "+family.ID+" | INVALID FAMILY: family spouses & marriage is repeated")
+            continue
+        else:    
+            family_by_spouses.append(hw_tuple)
 
         #US12
         old_parents(family, individuals)
