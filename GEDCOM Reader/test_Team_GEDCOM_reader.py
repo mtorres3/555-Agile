@@ -87,12 +87,10 @@ class TestGEDCOMReader(unittest.TestCase):
         self.assertEqual(families[4].children, ['I14', 'I11'])
 
     # Testing invalidation of sibling marriages
-    # THIS TEST IS BEING SKIPPED, HAVE TO FIX
-    def siblings_marriage(self):
-        self.assertEqual(families[4].children, ["I14", "I11"])
+    def test_siblings_marriage(self):
+        self.assertEqual(families[4].children, ['I14', 'I11'])
         self.assertEqual(individuals[10].spouse, "INVALID SPOUSE")
-        self.assertEqual(individuals[14].spouse, "INVALID SPOUSE")
-        print("testing one two")
+        self.assertEqual(individuals[13].spouse, "INVALID SPOUSE")
 
     # Testing to ensure there is an parent vs. child age difference limit
     def test_old_parents(self):
