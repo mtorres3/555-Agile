@@ -106,7 +106,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             birth = individual.birthday.split('-')
             birth = date(int(birth[0]), int(birth[1]), int(birth[2]))
             if (today - birth).days <= 30:
-                print("ID {}: {} born {} days ago.".format(individual.ID, individual.name, (today - birth).days))
+                print("ID: {} | INVALID INDIVIDUAL: born {} days ago.".format(individual.ID, individual.name, (today - birth).days))
 
         if individual.birthday == "NA":
             individual.age = 0
@@ -149,6 +149,10 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         #US34
         marr_2age = marriage_double_age(family, individuals)
+        
+        #US18
+        siblings_married(family,individuals)
+
         '''
         #US28
         child_list = []
@@ -165,8 +169,8 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
                     continue
                 else:
                     id_to_person(x, individuals).name = "INVALID LAST NAME"
-                    print(id_to_person(x, individuals).ID, id_to_person(x, individuals).name)
-                    print('ID: {} | INVALID FAMILY: male last names are not the same')
+                    print("ID: "+id_to_person(x, individuals).ID+" | INVALID INDIVIDUAL: invalid last name")
+                    print('ID: '+family.ID+' | INVALID FAMILY: male last names are not the same')
         
         # US15 family has < 15 children
         if len(family.children) >= 15:

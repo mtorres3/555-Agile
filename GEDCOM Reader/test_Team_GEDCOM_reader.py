@@ -15,7 +15,7 @@ class TestGEDCOMReader(unittest.TestCase):
 
     #Checking marriage before death date
     def test_marr_before_deat(self):
-        self.assertTrue(families[0].married == "INVALID DATE", msg="Error1")
+        self.assertTrue(families[0].married == "1992-03-22", msg="Error1")
         self.assertTrue(families[1].married == "INVALID DATE", msg="Error2")
         self.assertTrue(families[2].married == "1969-02-2", msg="Error3")
         self.assertTrue(families[3].married == "INVALID DATE", msg="Error4")
@@ -84,11 +84,21 @@ class TestGEDCOMReader(unittest.TestCase):
     # Testing to ensure there is a 15 child limit
     def test_fifteen_children_limit(self):
         self.assertEqual(families[1].children, ["I2", "I8", "I9"])
-        self.assertEqual(families[4].children, ['I11', 'I14'])
+        self.assertEqual(families[4].children, ['I14', 'I11'])
+
+    def siblings_marriage(self):
+        self.assertEqual(families[4].children, ["I14", "I11"])
+        self.assertEqual(individuals[10].spouse, "INVALID SPOUSE")
+        self.assertEqual(individuals[14].spouse, "INVALID SPOUSE")
+        print("SUCCESS BITCH")
 
     # Testing to ensure there is an parent vs. child age difference limit
     def test_old_parents(self):
-        self.assertEqual(individuals[2].age, "INVALID AGE")
+        birth_parent = datetime.datetime.strptime(individuals[1].birthday, '%Y-%m-%d')
+        birth_child = datetime.datetime.strptime(individuals[0].birthday, '%Y-%m-%d')
+        #29497 days is equal to 80.814 years
+        self.assertEqual(birth_child - birth_parent, datetime.timedelta(days=29497))
+        self.assertEqual(individuals[0].age, "INVALID AGE")
 
     #Testing to make sure that all of the last names are the same
     def test_same_last_name(self):

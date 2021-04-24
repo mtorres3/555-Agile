@@ -279,7 +279,6 @@ def multiple_births(family, individuals):
 #US34
 marr_2age0 = []
 def marriage_double_age(family, individuals):
-
     husb = id_to_person(family.husband_id, individuals)   
     wife = id_to_person(family.wife_id, individuals)
 
@@ -295,3 +294,22 @@ def marriage_double_age(family, individuals):
             marr_2age0.append(husb.name + " (" + husb.ID + ") - " + wife.name + " (" + wife.ID + ")")
 
     return marr_2age0
+
+#US18
+def siblings_married(family, individuals):
+    child_list = []
+    for c in family.children:
+        child_list.append(id_to_person(c, individuals))
+    if len(child_list) <= 1:
+        return
+    else:
+        for sibling in child_list:
+            spouses = []
+            for s in sibling.spouse:
+                spouses.append(id_to_person(s, individuals))
+            if any(e in child_list for e in spouses):
+                sibling.spouse = "INVALID SPOUSE"
+                print ("ID: "+sibling.ID+" | INVALID INDIVIDUAL: married to sibling")
+                print ("ID: "+family.ID+" | INVALID FAMILY: parents are siblings")
+            else:
+                continue
