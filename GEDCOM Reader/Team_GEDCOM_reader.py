@@ -99,6 +99,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         line_point += 1
 
     # Updates everyones age
+    names_birthdays = []
     for individual in individuals:
 
         today = date.today()
@@ -126,6 +127,11 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             print("ID: "+individual.id+" | INVALID INDIVIDUAL: age >= 150")
             individual.age = "INVALID AGE"
 
+        # US23
+        if [individual.name, individual.birthday] not in names_birthdays:
+            names_birthdays.append([individual.name, individual.birthday])
+        else:
+            print("Person {} is a repeated identity.".format(individual.ID))
     #Test code to make sure 15 child limit works
     #families[2].children = ["I20","I21","I22","I23","I24","I25","I26","I27",
     #                        "I28","I29","I30","I31","I32","I33","I34","I35"]
@@ -163,6 +169,11 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         #US18
         siblings_married(family,individuals)
 
+        # US25
+        child_names = ids_to_names(family.children, individuals)
+        for child in child_names:
+            if child_names.count(child) == 2:
+                print("Family {} has {} named {}".format(family.ID, child_names.count(child), child))
         '''
         #US28
         child_list = []
