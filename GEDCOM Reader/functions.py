@@ -36,8 +36,6 @@ def create_CHIL(families, individuals, line):
             childbirthday = person.birthday
             if (childbirthday < families[-1].married) and (families[-1].married != "INVALID DATE"):
                 print("ID: "+child+" | Invalid child birth date, before marriage")
-                print(child, childbirthday)
-                print(families[-1].ID, families[-1].married)
         # Check for child birthday before parents marriage
         if families[-1].divorced != "NA":
             div = datetime.datetime.strptime(families[-1].divorced, '%Y-%m-%d')
@@ -108,6 +106,7 @@ def husband(families, individuals, newLine, next_line):
                 print("ID: "+person.ID+" | INVALID INDIVIDUAL: gender wrong for role")
                 person.gender = "INVALID GENDER"
             person.spouse.append(families[-1].wife_id)
+            check_bigamy(individuals, families[-1].husband_id)
     return [individuals, families]
 
 def wife(families, individuals, newLine):
@@ -120,7 +119,14 @@ def wife(families, individuals, newLine):
                 print("ID: "+person.ID+" | INVALID INDIVIDUAL: gender wrong for role")
                 person.gender = "INVALID GENDER"
             person.spouse.append(families[-1].husband_id)
+            check_bigamy(individuals, families[-1].wife_id)
     return [individuals, families]
+
+def check_bigamy(individuals, ID):
+    for person in individuals:
+        if ID == person.ID:
+            if (len(person.spouse) > 1):
+                print("ID: "+ person.ID + " | INVALID MARRIAGE: Bigamy")
 
 # if 'DIV'
 def check_DIV(family, individuals, next_line, marr_date, div_date):
