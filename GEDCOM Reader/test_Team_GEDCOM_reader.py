@@ -54,7 +54,7 @@ class TestGEDCOMReader(unittest.TestCase):
     # Testing to see if Children match to the correct family
     def test_family_children(self):
         self.assertEqual(families[1].ID, "F2")
-        self.assertEqual(families[1].children, ["I2", "I8", "I9"])
+        self.assertEqual(families[1].children, ["I2", "I8", "I9",'I25', 'I24', 'I23'])
 
     # Testing to ensure Unique Individual IDs
     def test_unique_individual_IDs(self):
@@ -83,7 +83,7 @@ class TestGEDCOMReader(unittest.TestCase):
 
     # Testing to ensure there is a 15 child limit
     def test_fifteen_children_limit(self):
-        self.assertEqual(families[1].children, ["I2", "I8", "I9"])
+        self.assertEqual(families[1].children, ["I2", "I8", "I9",'I25', 'I24', 'I23'])
         self.assertEqual(families[4].children, ['I14', 'I11'])
 
     # Testing invalidation of sibling marriages
@@ -103,10 +103,6 @@ class TestGEDCOMReader(unittest.TestCase):
     #Testing to make sure that all of the last names are the same
     def test_same_last_name(self):
         self.assertEqual(individuals[0].name, 'INVALID LAST NAME')
-
-    #Testing to see if there are multiple births
-    def test_multiple_births(self):
-        self.assertEqual(multi_birt, [['Charlotte Devaul (I7)', 'Matt Devaul (I21)']])
     
     # Testing to see if deceased individuals are printed correctly
     #def test_list_deceased(self):

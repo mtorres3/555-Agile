@@ -2,7 +2,7 @@
 from datetime import *
 from extra_functions import *
 import datetime
-from extra_functions import *
+from extra_functions import * 
 today = str(datetime.date.today())
 
 def create_BIRT(birt_date, individual):
@@ -261,13 +261,20 @@ def living_married(family, individuals):
 #US32
 name_array_list = []
 def multiple_births(family, individuals):
-    same_bday = []       
-    for x in family.children:
-        for y in family.children:
-            if id_to_person(x, individuals).birthday == id_to_person(y, individuals).birthday and id_to_person(x, individuals).name != id_to_person(y, individuals).name:
+    same_bday = []
+    if len(family.children) > 0:
+        x = family.children[0]
+        #print(ids_to_names(x, individuals))
+    
+    for y in range(1,len(family.children)):
+        if id_to_person(x, individuals).birthday == id_to_person(family.children[y], individuals).birthday and id_to_person(x, individuals).name != id_to_person(y, individuals).name:
+            if id_to_person(x, individuals).name not in same_bday:
                 same_bday += id_to_person(x, individuals).name + " (" + id_to_person(x, individuals).ID + ")"
                 same_bday += '|'
-                same_bday += id_to_person(y, individuals).name + " (" + id_to_person(y, individuals).ID + ")"
+            same_bday += id_to_person(family.children[y], individuals).name + " (" +\
+                         id_to_person(family.children[y], individuals).ID + ")"
+            same_bday += '|'
+    
     names_list = ''.join(same_bday)
     names_list = names_list[:len(same_bday)//2]
     if len(names_list) > 0:
@@ -276,6 +283,38 @@ def multiple_births(family, individuals):
     multi = name_array_list
     return multi
 
+
+def multiple_births_v2(family, individuals):
+    bday_pair_list = [] #Multiple pairs of same bdays in family
+    same_bday = [] #Same exact bday
+
+    child_list = family.children
+    
+    for x in child_list:
+        first_bday = id_to_person(x, individuals).birthday
+        first_name = id_to_person(x, individuals).name
+        for y in child_list:
+            second_bday = id_to_person(y, individuals).birthday
+            second_name = id_to_person(y, individuals).name
+            
+            if first_bday == second_bday and first_name != second_name:
+                same_bday.append(first_name)
+                same_bday.append(second_name)
+
+        same_bday_single = list(dict.fromkeys(same_bday))
+        
+    if len(same_bday) > 1:
+        bday_pair_list.append(same_bday_single)
+    output = bday_pair_list
+    #US14
+    if len(same_bday) > 5:
+        print("INVALID MULTIPLE BIRTHS")
+        return []
+    elif output != []:
+        print("Multiple births in ", family.ID, ": ", output)
+        return output
+    
+    
 #US34
 marr_2age0 = []
 def marriage_double_age(family, individuals):

@@ -11,7 +11,7 @@ from datetime import *
 import datetime
 import sqlite3
 from extra_functions import *
-from functions import *
+from functions import * 
 
 
 # Opens GEDCOM file as fam variable
@@ -138,6 +138,8 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
     #US24 Unique Families and Marriages
     family_by_spouses = []
+    #US32 Multiple births
+    multiple_birth_list = []
     
     for family in families:
 
@@ -162,6 +164,9 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
         #US30
         list_marr = living_married(family, individuals)
+
+        #US32
+        multiple_birth_list = multiple_births_v2(family, individuals)
 
         #US34
         marr_2age = marriage_double_age(family, individuals)
@@ -199,7 +204,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
         
         if not sibling_spacing(family, individuals):
             print("ID: {} | INVALID FAMILY: has improper sibling spacing.".format(family.ID))
-        
+
     #Formatting between Validity Checks and Individual/Family List
     print()
     print("----------------------------------------------------------------------------------------------------------------------------")
@@ -295,3 +300,4 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
 
     conn.commit()
     print("successful")
+    
