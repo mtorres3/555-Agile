@@ -107,7 +107,7 @@ with open('Letizia_GEDTEST.ged.txt') as fam:
             birth = individual.birthday.split('-')
             birth = date(int(birth[0]), int(birth[1]), int(birth[2]))
             if (today - birth).days <= 30:
-                print("ID: {} | INVALID INDIVIDUAL: born {} days ago.".format(individual.ID, individual.name, (today - birth).days))
+                print("ID: {} | INVALID INDIVIDUAL: born {} days ago.".format(individual.ID, (today - birth).days))
 
         if individual.birthday == "NA":
             individual.age = 0
